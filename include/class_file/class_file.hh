@@ -17,7 +17,7 @@ class ISerializable {
   virtual std::size_t serializedSize() const = 0;
 };
 
-class Value : ISerializable final {
+class Value final : public ISerializable {
   ValueType type;
   std::size_t size;
   void *data;
@@ -27,12 +27,12 @@ class Value : ISerializable final {
   };
 };
 
-class FuncMeta : ISerializable final {
+class FuncMeta final : public ISerializable {
   std::vector<Value> constantPool;
   std::vector<std::string> names;
 };
 
-class Meta : ISerializable final {
+class Meta final : public ISerializable {
   std::vector<FuncMeta> funcs;
 
   std::size_t serialize(std::ostream &ost) const override {
@@ -47,7 +47,7 @@ class Meta : ISerializable final {
   }
 };
 
-class ClassFile : ISerializable final {
+class ClassFile final : public ISerializable {
 private:
   Meta meta_;
   std::vector<Byte> code_;
