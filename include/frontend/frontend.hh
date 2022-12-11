@@ -9,6 +9,7 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <array>
 
 #include "lLexer.hh"
 #include "parser.hh"
