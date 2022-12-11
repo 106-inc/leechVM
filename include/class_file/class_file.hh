@@ -17,28 +17,55 @@ class Value final : public ISerializable {
   std::size_t size;
   void *data;
 
-  std::size_t serialize(std::ostream &ost) const override{
+  void serialize(std::ostream &ost) const override{
 
   };
 };
 
 class FuncMeta final : public ISerializable {
-  std::vector<Value> constantPool;
+  std::vector<Value> cstPool;
   std::vector<std::string> names;
+  std::uint32_t addr;
+
+  void serialize(std::ostream &ost) const override {
+    /* Write FuncMeta size */
+    auto metaSize = serializedSize();
+    ost.write(reinterpret_cast<const char *>(metaSize), sizeof(metaSize));
+
+    /* Write function address */
+    ost.write(reinterpret_cast<const char *>(addr), sizeof(addr));
+
+    /* Write constant pool */
+    auto cstNum = cstPool.size();
+    ost.write(reinterpret_cast<const char *>(cstNum), sizeof(cstNum));
+    for (const auto &cst : cstPool)
+      cst.serialize(ost);
+
+    /* Write names */
+    auto nameNum = names.size();
+    ost.write(reinterpret_cast<const char *>(nameNum), sizeof(nameNum));
+    for (const auto &name : names) {
+      auto strlen = name.size();
+      ost.write(reinterpret_cast<const char *>(strlen), sizeof(strlen));
+      if (len > 0)
+        ost.write(name.data(), strlen * sizeof(char));
+    }
+  }
 };
 
 class Meta final : public ISerializable {
+private:
   std::vector<FuncMeta> funcs;
 
-  std::size_t serialize(std::ostream &ost) const override {
-    const auto pos = ost.tellp();
+public:
+  void serialize(std::ostream &ost) const override {
+    /* Write function number */
+    auto funcNum = funcs.size();
+    ost.write(reinterpret_cast<const char *>(funcNum), sizeof(funcNum));
 
-    for (const auto &func : funcs) {
-
+    /* Write functions meta */
+    for (const auto &func : funcs)
       func.serialize(ost);
-    }
-
-    return static_cast<std::size_t>(ost.tellp() - pos);
   }
 };
 
@@ -48,15 +75,15 @@ private:
   std::vector<Byte> code_;
 
 public:
-  std::size_t serialize(std::ostream &ost) const override {
-    const auto pos = ost.tellp();
+  void serialize(std::ostream &ost) const override {
+    /* Write magic */
 
-    /* auto metaSize = */ meta_.serialize(ost);
+    /* Write meta */
+    meta_.serialize(ost);
 
+    /* Write code */
     ost.write(reinterpret_cast<const char *>(code_.data()),
               code_.size() * sizeof(Byte));
-
-    return static_cast<std::size_t>(ost.tellp() - pos);
   }
 
   static ClassFile deserialize(Byte *data);
