@@ -21,7 +21,6 @@ public:
 
   parser::token_type yylex(parser::semantic_type *yylval);
   bool parse();
-  void codegen();
 
   friend parser;
 
