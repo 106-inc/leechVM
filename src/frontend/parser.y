@@ -22,6 +22,9 @@
        NAMES_DECL             ".names"
        CODE_DECL              ".code"
        COLON                  ":"
+       LRB                    "("
+       RRB                    ")"
+       COMMA                  ","
 %%
 
 program:            funcList                                  {};
@@ -38,7 +41,15 @@ constants:          constants leechObjEntry                   {};
 
 leechObjEntry:      IDENTIFIER COLON leechObj                 {};
 
-leechObj:           IDENTIFIER                                {};
+leechObj:           primitiveTy                               {};
+                  | array                                     {};
+
+primitiveTy:        IDENTIFIER                                {};
+                  | INTEGER                                   {};
+
+array:              LRB arrayArgs RRB                         {};
+arrayArgs:          arrayArgs COMMA primitiveTy               {};
+                  | primitiveTy                               {};
 
 namesBlock:         NAMES_DECL names                          {};
                   | /* empty */                               {};

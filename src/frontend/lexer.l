@@ -14,6 +14,9 @@ NAME [_]*[a-zA-Z][a-zA-Z0-9_]*
 ".names"    return yy::parser::token_type::NAMES_DECL;
 ".code"     return yy::parser::token_type::CODE_DECL;
 ":"         return yy::parser::token_type::COLON;
+","         return yy::parser::token_type::COMMA;
+"("         return yy::parser::token_type::LRB;
+")"         return yy::parser::token_type::RRB;
 {INTEGER}   return yy::parser::token_type::INTEGER;
 {NAME}      return yy::parser::token_type::IDENTIFIER;
 {WS}
