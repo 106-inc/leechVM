@@ -42,9 +42,8 @@ void Driver::reportSyntaxError(const parser::context &ctx) {
 void Driver::reportExpctdTok(const yy::parser::context &ctx) {
   // Report the tokens expected at this point.
 
-  auto &&numTokents = static_cast<int>(Meta::numTokens);
-  parser::symbol_kind_type expectd_tokns[static_cast<int>(Meta::numTokens)];
-  int num_of_expectd_tokns = ctx.expected_tokens(expectd_tokns, numTokents);
+  parser::symbol_kind_type expectd_tokns[static_cast<int>(numTokens)];
+  int num_of_expectd_tokns = ctx.expected_tokens(expectd_tokns, numTokens);
 
   std::cerr << "expected:";
 
