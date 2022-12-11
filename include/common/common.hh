@@ -1,8 +1,9 @@
 #ifndef __INCLUDE_COMMON_COMMON_HH__
 #define __INCLUDE_COMMON_COMMON_HH__
 
-namespace leech
-{
+#include <iostream>
+
+namespace leech {
 
 enum class ValueType : std::uint8_t { Integer, Float };
 
@@ -14,5 +15,4 @@ class ISerializable {
 
 } // namespace leech
 
-
-#endif // __INCLUDE_COMMON_COMMON_HH__
+#endif /* __INCLUDE_COMMON_COMMON_HH__ */
