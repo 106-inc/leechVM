@@ -13,6 +13,7 @@ NAME [_]*[a-zA-Z][a-zA-Z0-9_]*
 ".cpool"    return yy::parser::token_type::CPOLL_DECL;
 ".names"    return yy::parser::token_type::NAMES_DECL;
 ".code"     return yy::parser::token_type::CODE_DECL;
+":"         return yy::parser::token_type::COLON;
 {INTEGER}   return yy::parser::token_type::INTEGER;
 {NAME}      return yy::parser::token_type::IDENTIFIER;
 {WS}

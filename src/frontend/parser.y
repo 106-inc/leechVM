@@ -21,6 +21,7 @@
        CPOLL_DECL             ".cpool"
        NAMES_DECL             ".names"
        CODE_DECL              ".code"
+       COLON                  ":"
 %%
 
 program:            funcList                                  {};
@@ -32,14 +33,20 @@ func:               FUNC_DECL cpollBlock namesBlock codeBlock {};
 cpollBlock:         CPOLL_DECL constants                      {};
                   | /* empty */                               {};
 
-constants:          constants INTEGER                         {};
-                  | INTEGER                                   {};
+constants:          constants leechObjEntry                   {};
+                  | leechObjEntry                             {};
+
+leechObjEntry:      IDENTIFIER COLON leechObj                 {};
+
+leechObj:           IDENTIFIER                                {};
 
 namesBlock:         NAMES_DECL names                          {};
                   | /* empty */                               {};
 
-names:              names IDENTIFIER                          {};
-                  | IDENTIFIER                                {};
+names:              names nameEntry                           {};
+                  | nameEntry                                 {};
+
+nameEntry:          IDENTIFIER COLON IDENTIFIER               {};
 
 codeBlock:          CODE_DECL instructions                    {};
                   | /* empty */                               {};
