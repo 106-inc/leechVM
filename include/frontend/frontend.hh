@@ -29,6 +29,7 @@ public:
 private:
   void reportSyntaxError(const parser::context &ctx);
   void reportExpctdTok(const yy::parser::context &ctx);
+  void reportUnexpctdTok(const yy::parser::context &ctx);
 
   enum Meta { numTokens = 10 };
 

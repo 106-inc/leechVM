@@ -30,13 +30,13 @@ parser::token_type Driver::yylex(parser::semantic_type *yylval,
 
 void Driver::reportSyntaxError(const parser::context &ctx) {
   auto loc = ctx.location();
-  auto lookahead = ctx.token();
 
   std::cerr << "syntax error in ";
   std::cerr << "line: " << loc.begin.line;
   std::cerr << ", column: " << loc.begin.column << std::endl;
 
   reportExpctdTok(ctx);
+  reportUnexpctdTok(ctx);
 }
 
 void Driver::reportExpctdTok(const yy::parser::context &ctx) {
@@ -55,6 +55,14 @@ void Driver::reportExpctdTok(const yy::parser::context &ctx) {
   }
 
   std::cerr << std::endl;
+}
+
+void Driver::reportUnexpctdTok(const yy::parser::context &ctx) {
+  // Report the unexpected token.
+  auto lookahead = ctx.token();
+
+  std::cerr << "before: "
+            << "<" << parser::symbol_name(lookahead) << ">" << std::endl;
 }
 
 } // namespace yy
