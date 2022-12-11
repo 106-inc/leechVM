@@ -7,7 +7,7 @@ namespace leech {
 
 enum class ValueType : std::uint8_t { Integer, Float };
 
-class ISerializable {
+struct ISerializable {
   virtual std::size_t serialize(std::ostream &ost) const = 0;
   virtual std::size_t serializedSize() const = 0;
   virtual ~ISerializable() = default;
