@@ -31,7 +31,7 @@ private:
   void reportExpctdTok(const yy::parser::context &ctx);
   void reportUnexpctdTok(const yy::parser::context &ctx);
 
-  enum Meta { numTokens = 10 };
+  enum class Meta { numTokens = 10 };
 
 private:
   std::unique_ptr<Lexer> m_lexer = nullptr;
