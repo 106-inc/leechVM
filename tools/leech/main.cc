@@ -2,7 +2,7 @@
 
 #include "frontend/frontend.hh"
 
-int main(int argc, char **argv) try {
+int main() try {
   yy::Driver driver(std::cin, std::cout);
 } catch (const std::exception &e) {
   spdlog::error(e.what());
