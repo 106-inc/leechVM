@@ -3,7 +3,7 @@
 namespace yy {
 
 Driver::Driver(std::istream &in, std::ostream &out) {
-  m_lexer = std::make_unique<yyFlexLexer>(in, out);
+  m_lexer = std::make_unique<Lexer>(in, out);
 }
 
 bool Driver::parse() {
@@ -12,7 +12,8 @@ bool Driver::parse() {
   return !res;
 }
 
-parser::token_type Driver::yylex(parser::semantic_type *yylval) {
+parser::token_type Driver::yylex(parser::semantic_type *yylval,
+                                 parser::location_type *yylloc) {
   parser::token_type token = static_cast<parser::token_type>(m_lexer->yylex());
   if (token == yy::parser::token_type::IDENTIFIER) {
     std::string name(m_lexer->YYText());
@@ -23,7 +24,17 @@ parser::token_type Driver::yylex(parser::semantic_type *yylval) {
     yylval->as<int>() = std::atoi(m_lexer->YYText());
   }
 
+  *yylloc = m_lexer->getCurLocation();
   return token;
+}
+
+void Driver::reportSyntaxError(const parser::context &ctx) {
+  auto loc = ctx.location();
+  auto lookahead = ctx.token();
+
+  std::cerr << "syntax error in ";
+  std::cerr << "line: " << loc.begin.line;
+  std::cerr << ", column: " << loc.begin.column << std::endl;
 }
 
 } // namespace yy

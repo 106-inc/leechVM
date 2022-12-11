@@ -10,6 +10,7 @@
 #include <sstream>
 #include <string>
 
+#include "lLexer.hh"
 #include "parser.hh"
 
 namespace yy {
@@ -19,13 +20,17 @@ public:
   ~Driver() = default;
   Driver(std::istream &in, std::ostream &out);
 
-  parser::token_type yylex(parser::semantic_type *yylval);
+  parser::token_type yylex(parser::semantic_type *yylval,
+                           parser::location_type *yylloc);
   bool parse();
 
   friend parser;
 
 private:
-  std::unique_ptr<yyFlexLexer> m_lexer = nullptr;
+  void reportSyntaxError(const parser::context &ctx);
+
+private:
+  std::unique_ptr<Lexer> m_lexer = nullptr;
 };
 
 } // namespace yy

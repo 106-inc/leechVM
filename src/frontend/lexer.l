@@ -1,7 +1,11 @@
 %option c++
 %option noyywrap debug
+%option yylineno
+%option yyclass="Lexer"
 %{
 #include "parser.hh"
+#include "frontend/lLexer.hh"
+#define YY_USER_ACTION updCurLoc();
 %}
 
 WS [ \t\n\v]+
