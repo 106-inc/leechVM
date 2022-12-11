@@ -10,7 +10,7 @@ message(STATUS "flex files generated in: ${FLEX_lexer_OUTPUTS}")
 
 add_flex_bison_dependency(lexer parser)
 
-add_library(frontend frontend.cc ${GRAMMAR_GEN}/parser.cc ${FLEX_lexer_OUTPUTS})
+add_library(frontend frontend.cc ${BISON_parser_OUTPUTS} ${FLEX_lexer_OUTPUTS})
 target_include_directories(
     frontend
     SYSTEM
