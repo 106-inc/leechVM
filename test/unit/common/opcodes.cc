@@ -23,18 +23,18 @@ TEST(StringToOpcode, string_view) {
   auto opcode = OpcodeConv::fromName(correct);
   auto opcodeErr = OpcodeConv::fromName(err);
 
-  EXPECT_EQ(opcode.value(), Opcodes::POP_TOP);
+  EXPECT_EQ(opcode.value(), Opcodes::BINARY_OR);
   EXPECT_THROW(opcodeErr.value(), std::bad_optional_access);
 }
 
 TEST(StringToOpcode, const_char_ptr) {
-  const char *correct = "BINARY_OR";
+  const char *correct = "GEN_START";
   const char *err = "HAHA";
 
   auto opcode = OpcodeConv::fromName(correct);
   auto opcodeErr = OpcodeConv::fromName(err);
 
-  EXPECT_EQ(opcode.value(), Opcodes::POP_TOP);
+  EXPECT_EQ(opcode.value(), Opcodes::GEN_START);
   EXPECT_THROW(opcodeErr.value(), std::bad_optional_access);
 }
 
