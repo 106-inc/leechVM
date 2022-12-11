@@ -45,7 +45,7 @@ cpollBlock:         CPOLL_DECL constants                      {};
 constants:          constants leechObjEntry                   {};
                   | leechObjEntry                             {};
 
-leechObjEntry:      IDENTIFIER COLON leechObj                 {};
+leechObjEntry:      INTEGER COLON leechObj                    {};
 
 leechObj:           primitiveTy                               {};
                   | array                                     {};
@@ -63,7 +63,7 @@ namesBlock:         NAMES_DECL names                          {};
 names:              names nameEntry                           {};
                   | nameEntry                                 {};
 
-nameEntry:          IDENTIFIER COLON IDENTIFIER               {};
+nameEntry:          INTEGER COLON IDENTIFIER                  {};
 
 codeBlock:          CODE_DECL instructions                    {};
                   | /* empty */                               {};

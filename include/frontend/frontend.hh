@@ -28,6 +28,9 @@ public:
 
 private:
   void reportSyntaxError(const parser::context &ctx);
+  void reportExpctdTok(const yy::parser::context &ctx);
+
+  enum Meta { numTokens = 10 };
 
 private:
   std::unique_ptr<Lexer> m_lexer = nullptr;

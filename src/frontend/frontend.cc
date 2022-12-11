@@ -35,6 +35,26 @@ void Driver::reportSyntaxError(const parser::context &ctx) {
   std::cerr << "syntax error in ";
   std::cerr << "line: " << loc.begin.line;
   std::cerr << ", column: " << loc.begin.column << std::endl;
+
+  reportExpctdTok(ctx);
+}
+
+void Driver::reportExpctdTok(const yy::parser::context &ctx) {
+  // Report the tokens expected at this point.
+  parser::symbol_kind_type expectd_tokns[Meta::numTokens];
+  size_t num_of_expectd_tokns =
+      ctx.expected_tokens(expectd_tokns, Meta::numTokens);
+
+  std::cerr << "expected:";
+
+  for (size_t i = 0; i < num_of_expectd_tokns; ++i) {
+    if (i != 0)
+      std::cerr << " or ";
+
+    std::cerr << " <" << parser::symbol_name(expectd_tokns[i]) << "> ";
+  }
+
+  std::cerr << std::endl;
 }
 
 } // namespace yy
