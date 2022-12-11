@@ -38,7 +38,8 @@ program:            funcList                                  {};
 funcList:           funcList func                             {};
                   | func                                      {};
 
-func:               FUNC_DECL cpollBlock namesBlock codeBlock {};
+func:               FUNC_DECL IDENTIFIER
+                        cpollBlock namesBlock codeBlock       {};
 cpollBlock:         CPOLL_DECL constants                      {};
                   | /* empty */                               {};
 
