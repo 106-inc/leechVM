@@ -31,7 +31,7 @@ private:
   void reportExpctdTok(const yy::parser::context &ctx);
   void reportUnexpctdTok(const yy::parser::context &ctx);
 
-  static inline constexpr int numTokens = 10;
+  static inline constexpr size_t numTokens = 10;
 
 private:
   std::unique_ptr<Lexer> m_lexer = nullptr;
