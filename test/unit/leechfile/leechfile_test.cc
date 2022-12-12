@@ -11,8 +11,9 @@ TEST(Serialize, Empty) {
   LeechFile cf{};
   std::ostringstream oss{};
   std::string_view ans{"theLEECH"
+                       "\x0\x0\x0\x0\x0\x0\x0\x0"
                        "\x0\x0\x0\x0\x0\x0\x0\x0",
-                       16};
+                       24};
 
   // Act
   cf.serialize(oss);
