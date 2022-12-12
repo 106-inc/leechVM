@@ -29,13 +29,11 @@ public:
     dataStack_.emplace(new T(std::forward<Args>(args)...));
   }
 
-  const auto getConst(ArgType idx) const {
-    return pmeta_->cstPool.at(idx).get();
-  }
+  auto getConst(ArgType idx) const { return pmeta_->cstPool.at(idx).get(); }
 
   std::string_view getName(ArgType idx) const { return pmeta_->names.at(idx); }
 
-  const auto top() const { return dataStack_.top().get(); }
+  auto top() const { return dataStack_.top().get(); }
 
   void pop() { dataStack_.pop(); }
 };
