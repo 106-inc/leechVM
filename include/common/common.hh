@@ -50,7 +50,7 @@ template <Number T> void serializeNum(std::ostream &ost, T val) {
 }
 
 inline void serializeString(std::ostream &ost, std::string_view sv) {
-  auto svLen = sv.size();
+  auto svLen = static_cast<std::size_t>(sv.size());
   serializeNum(ost, svLen);
   if (svLen > 0)
     ost.write(sv.data(), svLen * sizeof(std::string_view::value_type));
