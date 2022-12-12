@@ -10,7 +10,7 @@ enum class Opcodes : std::uint8_t {
   UNKNOWN,
 #define LEECH_MAKE_OPCODE(opc) opc,
 
-#include "opcodes.in"
+#include "opcodes.ii"
 
 #undef LEECH_MAKE_OPCODE
 };
@@ -21,7 +21,7 @@ private:
     static std::unordered_map<std::string_view, Opcodes> toOpcodeMap{
 #define LEECH_MAKE_OPCODE(opc) {#opc, Opcodes::opc},
 
-#include "opcodes.in"
+#include "opcodes.ii"
 
 #undef LEECH_MAKE_OPCODE
     };
@@ -32,7 +32,7 @@ private:
     static std::unordered_map<Opcodes, std::string_view> toStrMap{
 #define LEECH_MAKE_OPCODE(opc) {Opcodes::opc, #opc},
 
-#include "opcodes.in"
+#include "opcodes.ii"
 
 #undef LEECH_MAKE_OPCODE
     };
