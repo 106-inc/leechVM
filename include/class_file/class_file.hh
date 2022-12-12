@@ -2,75 +2,69 @@
 #define __INCLUDE_CLASS_FILE_CLASS_FILE_HH__
 
 #include <cstdint>
+#include <memory>
 #include <ostream>
 #include <string>
 #include <vector>
 
 #include "../common/common.hh"
+#include "../leechobj/leechobj.hh"
 
 namespace leech {
 
 using Byte = std::uint8_t;
 
-class Value final : public ISerializable {
-  ValueType type;
-  std::size_t size;
-  void *data;
-
-  void serialize(std::ostream &ost) const override{
-
-  };
-};
-
-class FuncMeta final : public ISerializable {
-  std::vector<Value> cstPool;
+struct FuncMeta final : public ISerializable {
+  std::vector<std::unique_ptr<LeechObj>> cstPool;
   std::vector<std::string> names;
-  std::uint32_t addr;
+  std::uint64_t addr;
 
   void serialize(std::ostream &ost) const override {
     /* Write FuncMeta size */
     auto metaSize = serializedSize();
-    ost.write(reinterpret_cast<const char *>(metaSize), sizeof(metaSize));
+    serializeNum(ost, metaSize);
 
     /* Write function address */
-    ost.write(reinterpret_cast<const char *>(addr), sizeof(addr));
+    serializeNum(ost, addr);
 
     /* Write constant pool */
     auto cstNum = cstPool.size();
-    ost.write(reinterpret_cast<const char *>(cstNum), sizeof(cstNum));
+    serializeNum<uint64_t>(ost, cstNum);
     for (const auto &cst : cstPool)
-      cst.serialize(ost);
+      cst->serialize(ost);
 
     /* Write names */
     auto nameNum = names.size();
-    ost.write(reinterpret_cast<const char *>(nameNum), sizeof(nameNum));
+    serializeNum<uint64_t>(ost, nameNum);
     for (const auto &name : names) {
       auto strlen = name.size();
-      ost.write(reinterpret_cast<const char *>(strlen), sizeof(strlen));
-      if (len > 0)
+      serializeNum(ost, strlen);
+      if (strlen > 0)
         ost.write(name.data(), strlen * sizeof(char));
     }
   }
+
+  std::size_t serializedSize() const override { return 0; }
 };
 
-class Meta final : public ISerializable {
-private:
+struct Meta final : public ISerializable {
   std::vector<FuncMeta> funcs;
 
-public:
   void serialize(std::ostream &ost) const override {
     /* Write function number */
     auto funcNum = funcs.size();
-    ost.write(reinterpret_cast<const char *>(funcNum), sizeof(funcNum));
+    serializeNum<uint64_t>(ost, funcNum);
 
     /* Write functions meta */
     for (const auto &func : funcs)
       func.serialize(ost);
   }
+
+  std::size_t serializedSize() const override { return 0; }
 };
 
-class ClassFile final : public ISerializable {
-private:
+struct ClassFile final : public ISerializable {
+  // private:
   Meta meta_;
   std::vector<Byte> code_;
 
@@ -82,11 +76,12 @@ public:
     meta_.serialize(ost);
 
     /* Write code */
-    ost.write(reinterpret_cast<const char *>(code_.data()),
-              code_.size() * sizeof(Byte));
+    if (code_.size() > 0)
+      ost.write(reinterpret_cast<const char *>(code_.data()),
+                code_.size() * sizeof(Byte));
   }
 
-  static ClassFile deserialize(Byte *data);
+  std::size_t serializedSize() const override { return 0; }
 };
 
 } // namespace leech
