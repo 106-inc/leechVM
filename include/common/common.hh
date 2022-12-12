@@ -35,20 +35,23 @@ template <NumberLeech T> inline consteval ValueType typeToValueType() {
     return ValueType::Integer;
   return ValueType::Float;
 }
+
 template <typename T>
-concept Container = !std::is_same_v<T, std::string> && requires(T a) {
-  typename T::value_type;
-  typename T::reference;
-  typename T::const_reference;
-  typename T::iterator;
-  typename T::const_iterator;
-  typename T::size_type;
-  { a.begin() } -> std::convertible_to<typename T::iterator>;
-  { a.end() } -> std::convertible_to<typename T::iterator>;
-  { a.cbegin() } -> std::convertible_to<typename T::const_iterator>;
-  { a.cend() } -> std::convertible_to<typename T::const_iterator>;
-  {a.clear()};
-};
+concept Container = !
+std::is_same_v<T, std::string>
+    &&requires(T a) {
+        typename T::value_type;
+        typename T::reference;
+        typename T::const_reference;
+        typename T::iterator;
+        typename T::const_iterator;
+        typename T::size_type;
+        { a.begin() } -> std::convertible_to<typename T::iterator>;
+        { a.end() } -> std::convertible_to<typename T::iterator>;
+        { a.cbegin() } -> std::convertible_to<typename T::const_iterator>;
+        { a.cend() } -> std::convertible_to<typename T::const_iterator>;
+        { a.clear() };
+      };
 
 template <Number T> void serializeNum(std::ostream &ost, T val) {
   ost.write(reinterpret_cast<char *>(&val), sizeof(val));
@@ -60,6 +63,21 @@ inline void serializeString(std::ostream &ost, std::string_view sv) {
   if (svLen > 0)
     ost.write(sv.data(), static_cast<std::streamsize>(
                              svLen * sizeof(std::string_view::value_type)));
+}
+
+template <Number T> T deserializeNum(std::istream &ist) {
+  T num = 0;
+  if (!ist.read(reinterpret_cast<char *>(num), sizeof(num)))
+    throw std::runtime_error{"Can't read number from istream"};
+  return num;
+}
+
+inline std::string deserializeString(std::istream &ist, std::size_t size) {
+  std::string res{};
+  res.resize(size);
+  if (!ist.read(res.data(), size))
+    throw std::runtime_error{"Can't read string from istream"};
+  return res;
 }
 
 struct ISerializable {
@@ -94,6 +112,11 @@ public:
 
   auto getOpcode() const { return opcode_; }
   auto getArg() const { return arg_; }
+
+  static Instruction deserialize(std::istream &ist) {
+    throw std::runtime_error{"Not implemented yet"};
+    return {Opcodes::UNKNOWN};
+  }
 };
 
 } // namespace leech
