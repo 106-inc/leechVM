@@ -27,6 +27,7 @@ namespace yy
        CPOLL_DECL             ".cpool"
        NAMES_DECL             ".names"
        CODE_DECL              ".code"
+       LABEL                  ".label"
        COLON                  ":"
        LRB                    "("
        RRB                    ")"
@@ -66,14 +67,18 @@ names:              names nameEntry                           {};
 
 nameEntry:          INTEGER COLON IDENTIFIER                  {};
 
-codeBlock:          CODE_DECL instructions                    {};
+codeBlock:          CODE_DECL code                            {};
                   | /* empty */                               {};
 
-instructions:       instructions instruction                  {};
-                  | instruction                               {};
+code:               code codeEntry                            {};
+                  | codeEntry                                 {};
+
+codeEntry:          LABEL IDENTIFIER                          {};
+                  | instruction
 
 instruction:        IDENTIFIER                                {};
                   | IDENTIFIER INTEGER                        {};
+                  | IDENTIFIER COLON IDENTIFIER               {};
 %%
 
 namespace yy {

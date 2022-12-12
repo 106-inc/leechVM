@@ -17,6 +17,7 @@ NAME [_]*[a-zA-Z][a-zA-Z0-9_]*
 ".cpool"    return yy::parser::token_type::CPOLL_DECL;
 ".names"    return yy::parser::token_type::NAMES_DECL;
 ".code"     return yy::parser::token_type::CODE_DECL;
+".label"    return yy::parser::token_type::LABEL;
 ":"         return yy::parser::token_type::COLON;
 ","         return yy::parser::token_type::COMMA;
 "("         return yy::parser::token_type::LRB;
