@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <concepts>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -30,6 +31,9 @@ public:
   virtual void print() const = 0;
 
   virtual pLeechObj clone() const = 0;
+  [[noreturn]] virtual bool compare(LeechObj *obj, CmpOp op) const;
+
+  auto getType() const { return type_; }
 
 protected:
   void serializeTypeNSize(std::ostream &ost) const {
@@ -67,6 +71,34 @@ public:
 
   pLeechObj clone() const override {
     return std::make_unique<NumberObj>(value_);
+  }
+
+  bool compare(LeechObj *obj, CmpOp op) const override {
+    if (obj->getType() != getType())
+      throw std::invalid_argument("Can't compare");
+
+    auto *pObj = dynamic_cast<NumberObj<T> *>(obj);
+
+    if (pObj == nullptr)
+      throw std::runtime_error("Dynamic cast failed");
+
+    switch (op) {
+    case CmpOp::LE:
+      return value_ < pObj->value_;
+    case CmpOp::LEQ:
+      return value_ <= pObj->value_;
+    case CmpOp::EQ:
+      return value_ == pObj->value_;
+    case CmpOp::NEQ:
+      return value_ != pObj->value_;
+    case CmpOp::GR:
+      return value_ > pObj->value_;
+    case CmpOp::GREQ:
+      return value_ >= pObj->value_;
+
+    default:
+      throw std::runtime_error("Uknown cmp op type");
+    }
   }
 
 private:

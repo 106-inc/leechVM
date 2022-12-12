@@ -15,6 +15,7 @@ constexpr std::string_view kMainFuncName = "main";
 class StackFrame final {
   const FuncMeta *pmeta_ = nullptr;
   std::stack<pLeechObj> dataStack_{};
+  std::unordered_map<std::string, pLeechObj> vars_{};
 
 public:
   StackFrame(const FuncMeta *pmeta);
@@ -29,11 +30,35 @@ public:
     dataStack_.emplace(new T(std::forward<Args>(args)...));
   }
 
+  void setVar(std::string_view name, pLeechObj obj) {
+    setVar(std::string(name), std::move(obj));
+  }
+
+  void setVar(const std::string &name, pLeechObj obj) {
+    vars_.at(name) = std::move(obj);
+  }
+
+  const auto *getVar(const std::string &name) const {
+    return vars_.at(name).get();
+  }
+
+  const auto *getVar(std::string_view name) const {
+    return getVar(std::string(name));
+  }
+
+  void push(pLeechObj obj);
+
   auto getConst(ArgType idx) const { return pmeta_->cstPool.at(idx).get(); }
 
   std::string_view getName(ArgType idx) const { return pmeta_->names.at(idx); }
 
   auto top() const { return dataStack_.top().get(); }
+
+  auto popGetTos() {
+    auto tos = top()->clone();
+    pop();
+    return tos;
+  }
 
   void pop() { dataStack_.pop(); }
 };
@@ -53,13 +78,15 @@ struct State final {
   State &operator=(const State &) = default;
 
   const auto &getInst(std::uint64_t idx) const { return pFile->code.at(idx); }
+
+  auto &getCurFrame() { return funcStack.top(); }
 };
 
 using ExecFunc = std::function<void(const Instruction &, State &)>;
 
 class Executor final {
   State state_{};
-  static inline std::unordered_map<Opcodes, ExecFunc> execMap_{};
+  static const std::unordered_map<Opcodes, ExecFunc> execMap_;
 
 public:
   Executor(LeechFile *leechFile) : state_(leechFile) {}
