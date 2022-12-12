@@ -10,9 +10,6 @@ void FuncMeta::serialize(std::ostream &ost) const {
   /* Write function address */
   serializeNum<std::uint64_t>(ost, addr);
 
-  /* Write function name */
-  serializeString(ost, funcName);
-
   /* Write constant pool */
   auto cstNum = cstPool.size();
   serializeNum<std::uint64_t>(ost, cstNum);
@@ -36,8 +33,10 @@ void Meta::serialize(std::ostream &ost) const {
   serializeNum<std::uint64_t>(ost, funcNum);
 
   /* Write functions meta */
-  for (const auto &func : funcs)
-    func.serialize(ost);
+  for (auto &&[name, fm] : funcs) {
+    serializeString(ost, name);
+    fm.serialize(ost);
+  }
 }
 
 /**

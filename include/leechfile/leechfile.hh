@@ -5,6 +5,7 @@
 #include <memory>
 #include <ostream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "common/common.hh"
@@ -14,15 +15,14 @@ namespace leech {
 
 struct FuncMeta final : public ISerializable {
   std::uint64_t addr;
-  std::string funcName;
-  std::vector<std::unique_ptr<LeechObj>> cstPool;
+  std::vector<std::unique_ptr<LeechObj>> cstPool{};
   std::vector<std::string> names;
 
   void serialize(std::ostream &ost) const override;
 };
 
 struct Meta final : public ISerializable {
-  std::vector<FuncMeta> funcs;
+  std::unordered_map<std::string, FuncMeta> funcs;
 
   void serialize(std::ostream &ost) const override;
 };
