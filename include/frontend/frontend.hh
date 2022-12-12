@@ -1,5 +1,5 @@
-#ifndef __INCLUDE_DRIVER_HH__
-#define __INCLUDE_DRIVER_HH__
+#ifndef __INCLUDE_FRONTEND_FRONTEND_HH__
+#define __INCLUDE_FRONTEND_FRONTEND_HH__
 
 #ifndef yyFlexLexer
 #include <FlexLexer.h>
@@ -40,4 +40,4 @@ private:
 
 } // namespace yy
 
-#endif /* __INCLUDE_DRIVER_HH__ */
+#endif // __INCLUDE_FRONTEND_FRONTEND_HH__

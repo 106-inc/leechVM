@@ -1,5 +1,5 @@
-#ifndef __INCLUDE_FRONTEND_LEXER_HH__
-#define __INCLUDE_FRONTEND_LEXER_HH__
+#ifndef __INCLUDE_FRONTEND_LLEXER_HH__
+#define __INCLUDE_FRONTEND_LLEXER_HH__
 
 #include <cctype>
 #include <iostream>
@@ -38,4 +38,4 @@ public:
   ~Lexer() override = default;
 };
 
-#endif /* __INCLUDE_FRONTEND_LEXER_HH__ */
+#endif // __INCLUDE_FRONTEND_LLEXER_HH__
