@@ -12,7 +12,7 @@ public:
   LeechVM &operator=(const LeechVM &) = delete;
   LeechVM &operator=(LeechVM &&) = delete;
 
-  LeechVM(std::istream &in) : driver_{in, std::cout} {}
+  LeechVM(std::istream &in, std::ostream &out) : driver_{in, out} {}
   void run();
 
 private:

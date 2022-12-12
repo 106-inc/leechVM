@@ -12,7 +12,7 @@ namespace fs = std::filesystem;
 int main(int argc, char **argv) try {
   CLI::App app{"LeechVM"};
   fs::path input{};
-  app.add_option("input", input, "Executable file")->required();
+  app.add_option("input", input, ".leech file")->required();
 
   try {
     app.parse(argc, argv);
@@ -21,7 +21,11 @@ int main(int argc, char **argv) try {
   }
 
   std::fstream in(input.c_str());
-  leech::LeechVM vm(in);
+  if (!in.is_open()) {
+    throw std::invalid_argument("can't find .leech file");
+  }
+
+  leech::LeechVM vm(in, std::cout);
   vm.run();
 } catch (const std::exception &e) {
   spdlog::error(e.what());
