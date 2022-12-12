@@ -12,8 +12,6 @@
 
 namespace leech {
 
-using Byte = std::uint8_t;
-
 struct FuncMeta final : public ISerializable {
   std::vector<std::unique_ptr<LeechObj>> cstPool;
   std::vector<std::string> names;
@@ -30,7 +28,7 @@ struct Meta final : public ISerializable {
 
 struct LeechFile final : public ISerializable {
   Meta meta_;
-  std::vector<Byte> code_;
+  std::vector<Instruction> code_;
 
   void serialize(std::ostream &ost) const override;
 };

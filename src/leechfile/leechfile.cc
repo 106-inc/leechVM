@@ -48,15 +48,15 @@ void Meta::serialize(std::ostream &ost) const {
 void LeechFile::serialize(std::ostream &ost) const {
   /* Write magic */
   auto magic = reinterpret_cast<const std::uint64_t *>("theLEECH");
-  serializeNum(ost, *magic);
+  serializeNum<uint64_t>(ost, *magic);
 
   /* Write meta */
   meta_.serialize(ost);
 
   /* Write code */
-  if (code_.size() > 0)
-    ost.write(reinterpret_cast<const char *>(code_.data()),
-              code_.size() * sizeof(Byte));
+  serializeNum<uint64_t>(ost, code_.size());
+  for (const auto &inst : code_)
+    inst.serialize(ost);
 }
 
 } // namespace leech
