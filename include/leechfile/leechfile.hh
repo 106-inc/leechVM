@@ -71,6 +71,8 @@ struct LeechFile final : public ISerializable {
 public:
   void serialize(std::ostream &ost) const override {
     /* Write magic */
+    auto magic = reinterpret_cast<const uint64_t *>("theLEECH");
+    serializeNum(ost, *magic);
 
     /* Write meta */
     meta_.serialize(ost);
