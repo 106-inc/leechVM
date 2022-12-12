@@ -5,11 +5,11 @@
 #include <FlexLexer.h>
 #endif
 
+#include <array>
 #include <fstream>
 #include <memory>
 #include <sstream>
 #include <string>
-#include <array>
 
 #include "lLexer.hh"
 #include "parser.hh"
