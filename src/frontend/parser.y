@@ -57,6 +57,9 @@ func:               funcHeader
 funcHeader:         FUNC_DECL IDENTIFIER                      {
                                                                 driver->currentFunc_ = $2;
                                                                 driver->leechFile_->meta.funcs[$2].addr = driver->globalInstrCount_;
+                                                                driver->instrCount_ = 0;
+                                                                driver->labels_.clear();
+                                                                driver->forwardBranches_.clear();
                                                               }
 
 cpollBlock:         CPOLL_DECL constants                      {};
