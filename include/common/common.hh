@@ -74,6 +74,9 @@ public:
     serializeNum(ost, arg_);
   }
 
+  auto getOpcode() const { return opcode_; }
+  auto getArg() const { return arg_; }
+
   constexpr std::size_t serializedSize() const override { return kInstSize; }
 };
 
