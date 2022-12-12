@@ -50,10 +50,11 @@ template <Number T> void serializeNum(std::ostream &ost, T val) {
 }
 
 inline void serializeString(std::ostream &ost, std::string_view sv) {
-  auto svLen = static_cast<std::size_t>(sv.size());
+  auto svLen = sv.size();
   serializeNum(ost, svLen);
   if (svLen > 0)
-    ost.write(sv.data(), svLen * sizeof(std::string_view::value_type));
+    ost.write(sv.data(), static_cast<std::streamsize>(
+                             svLen * sizeof(std::string_view::value_type)));
 }
 
 struct ISerializable {
