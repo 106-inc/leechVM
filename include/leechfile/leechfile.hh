@@ -22,14 +22,14 @@ struct FuncMeta final : public ISerializable {
 };
 
 struct Meta final : public ISerializable {
-  std::unordered_map<std::string, FuncMeta> funcs;
+  std::unordered_map<std::string, FuncMeta> funcs{};
 
   void serialize(std::ostream &ost) const override;
 };
 
 struct LeechFile final : public ISerializable {
-  Meta meta;
-  std::vector<Instruction> code;
+  Meta meta{};
+  std::vector<Instruction> code{};
 
   void serialize(std::ostream &ost) const override;
   void dump2LeechFormat(std::ostream &ost);
