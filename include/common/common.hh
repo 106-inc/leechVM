@@ -4,6 +4,8 @@
 #include <iostream>
 #include <type_traits>
 
+#include "opcodes.hh"
+
 namespace leech {
 
 enum class ValueType : std::uint8_t { Unknown, Integer, Float, String, Tuple };
@@ -49,6 +51,30 @@ struct ISerializable {
   virtual void serialize(std::ostream &ost) const = 0;
   virtual std::size_t serializedSize() const = 0;
   virtual ~ISerializable() = default;
+};
+
+using ArgType = std::uint8_t;
+
+constexpr std::size_t kArgSize = sizeof(ArgType);
+constexpr std::size_t kInstSize =
+    sizeof(std::underlying_type_t<Opcodes>) + kArgSize;
+
+class Instruction final : public ISerializable {
+  Opcodes opcode_{};
+  ArgType arg_{};
+
+public:
+  Instruction(Opcodes opcode, ArgType arg) : opcode_(opcode), arg_(arg) {}
+
+  Instruction(std::underlying_type_t<Opcodes> opcode, ArgType arg)
+      : Instruction(static_cast<Opcodes>(opcode), arg) {}
+
+  void serialize(std::ostream &ost) const override {
+    serializeNum(ost, toUnderlying(opcode_));
+    serializeNum(ost, arg_);
+  }
+
+  constexpr std::size_t serializedSize() const override { return kInstSize; }
 };
 
 } // namespace leech
