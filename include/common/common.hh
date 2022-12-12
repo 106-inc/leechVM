@@ -63,7 +63,11 @@ class Instruction final : public ISerializable {
   ArgType arg_{};
 
 public:
-  Instruction(Opcodes opcode, ArgType arg) : opcode_(opcode), arg_(arg) {}
+  Instruction(Opcodes opcode, ArgType arg) : opcode_(opcode), arg_(arg) {
+    if (opcode_ == Opcodes::UNKNOWN)
+      throw std::invalid_argument(
+          "Trying to create Instruction with UNKNOWN opcode");
+  }
 
   Instruction(std::underlying_type_t<Opcodes> opcode, ArgType arg)
       : Instruction(static_cast<Opcodes>(opcode), arg) {}
