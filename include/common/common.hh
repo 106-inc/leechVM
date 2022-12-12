@@ -29,22 +29,31 @@ template <NumberLeech T> inline consteval ValueType typeToValueType() {
   return ValueType::Float;
 }
 template <typename T>
-concept Container = !std::is_same_v<T, std::string> && requires(T a) {
-  typename T::value_type;
-  typename T::reference;
-  typename T::const_reference;
-  typename T::iterator;
-  typename T::const_iterator;
-  typename T::size_type;
-  { a.begin() } -> std::convertible_to<typename T::iterator>;
-  { a.end() } -> std::convertible_to<typename T::iterator>;
-  { a.cbegin() } -> std::convertible_to<typename T::const_iterator>;
-  { a.cend() } -> std::convertible_to<typename T::const_iterator>;
-  {a.clear()};
-};
+concept Container = !
+std::is_same_v<T, std::string>
+    &&requires(T a) {
+        typename T::value_type;
+        typename T::reference;
+        typename T::const_reference;
+        typename T::iterator;
+        typename T::const_iterator;
+        typename T::size_type;
+        { a.begin() } -> std::convertible_to<typename T::iterator>;
+        { a.end() } -> std::convertible_to<typename T::iterator>;
+        { a.cbegin() } -> std::convertible_to<typename T::const_iterator>;
+        { a.cend() } -> std::convertible_to<typename T::const_iterator>;
+        { a.clear() };
+      };
 
 template <Number T> void serializeNum(std::ostream &ost, T val) {
   ost.write(reinterpret_cast<char *>(&val), sizeof(val));
+}
+
+inline void serializeString(std::ostream &ost, std::string_view sv) {
+  auto svLen = sv.size();
+  serializeNum(ost, svLen);
+  if (svLen > 0)
+    ost.write(sv.data(), svLen * sizeof(std::string_view::value_type));
 }
 
 struct ISerializable {
