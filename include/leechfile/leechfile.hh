@@ -30,10 +30,7 @@ struct FuncMeta final : public ISerializable {
   ~FuncMeta() = default;
 
   void serialize(std::ostream &ost) const override;
-  static std::pair<std::string, FuncMeta>
-  deserialize([[maybe_unused]] std::istream &ist) {
-    return {};
-  }
+  static std::pair<std::string, FuncMeta> deserialize(std::istream &ist);
 };
 
 struct Meta final : public ISerializable {

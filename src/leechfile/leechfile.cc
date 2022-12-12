@@ -47,9 +47,8 @@ std::pair<std::string, FuncMeta> FuncMeta::deserialize(std::istream &ist) {
   auto cstNum = deserializeNum<uint64_t>(ist);
   std::vector<pLeechObj> cstPool{};
   for (uint32_t i = 0; i < cstNum; ++i) {
-    
+    /* TODO: Read type, read size, deserialize */
   }
-
 
   return {};
 }
