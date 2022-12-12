@@ -47,8 +47,32 @@ template <Number T> void serializeNum(std::ostream &ost, T val) {
 
 struct ISerializable {
   virtual void serialize(std::ostream &ost) const = 0;
-  virtual std::size_t serializedSize() const = 0;
   virtual ~ISerializable() = default;
+};
+
+using ArgType = std::uint8_t;
+
+constexpr std::size_t kArgSize = sizeof(ArgType);
+constexpr std::size_t kInstSize =
+    sizeof(std::underlying_type_t<Opcodes>) + kArgSize;
+
+class Instruction final : public ISerializable {
+  Opcodes opcode_{};
+  ArgType arg_{};
+
+public:
+  Instruction(Opcodes opcode, ArgType arg) : opcode_(opcode), arg_(arg) {}
+
+  Instruction(std::underlying_type_t<Opcodes> opcode, ArgType arg)
+      : Instruction(static_cast<Opcodes>(opcode), arg) {}
+
+  void serialize(std::ostream &ost) const override {
+    serializeNum(ost, toUnderlying(opcode_));
+    serializeNum(ost, arg_);
+  }
+
+  auto getOpcode() const { return opcode_; }
+  auto getArg() const { return arg_; }
 };
 
 } // namespace leech
