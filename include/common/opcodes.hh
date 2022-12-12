@@ -63,4 +63,4 @@ public:
 
 } // namespace leech
 
-#endif /* __INCLUDE_COMMON_OPCODES_HH__ */
+#endif // __INCLUDE_COMMON_OPCODES_HH__

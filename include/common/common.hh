@@ -35,4 +35,4 @@ struct ISerializable {
 
 } // namespace leech
 
-#endif /* __INCLUDE_COMMON_COMMON_HH__ */
+#endif // __INCLUDE_COMMON_COMMON_HH__

@@ -76,4 +76,4 @@ public:
 
 } // namespace leech
 
-#endif /* __INCLUDE_LEECHOBJ_LEECHOBJ_HH__ */
+#endif // __INCLUDE_LEECHOBJ_LEECHOBJ_HH__
