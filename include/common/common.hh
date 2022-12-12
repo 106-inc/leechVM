@@ -4,6 +4,8 @@
 #include <iostream>
 #include <type_traits>
 
+#include "opcodes.hh"
+
 namespace leech {
 
 enum class ValueType : std::uint8_t { Unknown, Integer, Float, String, Tuple };

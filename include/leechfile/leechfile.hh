@@ -20,14 +20,12 @@ struct FuncMeta final : public ISerializable {
   std::uint64_t addr;
 
   void serialize(std::ostream &ost) const override;
-  std::size_t serializedSize() const override;
 };
 
 struct Meta final : public ISerializable {
   std::vector<FuncMeta> funcs;
 
   void serialize(std::ostream &ost) const override;
-  std::size_t serializedSize() const override;
 };
 
 struct LeechFile final : public ISerializable {
@@ -35,7 +33,6 @@ struct LeechFile final : public ISerializable {
   std::vector<Byte> code_;
 
   void serialize(std::ostream &ost) const override;
-  std::size_t serializedSize() const override;
 };
 
 } // namespace leech

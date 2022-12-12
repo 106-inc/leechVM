@@ -27,8 +27,6 @@ void FuncMeta::serialize(std::ostream &ost) const {
   }
 }
 
-std::size_t FuncMeta::serializedSize() const { return 0; }
-
 /**
  * Meta definitions
  */
@@ -42,8 +40,6 @@ void Meta::serialize(std::ostream &ost) const {
   for (const auto &func : funcs)
     func.serialize(ost);
 }
-
-std::size_t Meta::serializedSize() const { return 0; }
 
 /**
  * LeechFile definitions
@@ -62,7 +58,5 @@ void LeechFile::serialize(std::ostream &ost) const {
     ost.write(reinterpret_cast<const char *>(code_.data()),
               code_.size() * sizeof(Byte));
 }
-
-std::size_t LeechFile::serializedSize() const { return 0; }
 
 } // namespace leech
