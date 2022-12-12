@@ -12,6 +12,9 @@
 
 namespace leech {
 
+class LeechObj;
+using pLeechObj = std::unique_ptr<LeechObj>;
+
 class LeechObj : public ISerializable {
   std::size_t size_{};
   ValueType type_{};
@@ -23,6 +26,8 @@ public:
     serializeTypeNSize(ost);
     serializeVal(ost);
   }
+
+  virtual pLeechObj clone() const = 0;
 
 protected:
   void serializeTypeNSize(std::ostream &ost) const {
@@ -41,6 +46,8 @@ class NoneObj final : public LeechObj {
 public:
   NoneObj() : LeechObj(0, ValueType::None) {}
 
+  pLeechObj clone() const override { return std::make_unique<NoneObj>(); }
+
 private:
   void serializeVal(std::ostream &) const override {}
 };
@@ -51,6 +58,10 @@ template <NumberLeech T> class NumberObj final : public LeechObj {
 public:
   explicit NumberObj(T value)
       : LeechObj(sizeof(T), typeToValueType<T>()), value_(value) {}
+
+  pLeechObj clone() const override {
+    return std::make_unique<NumberObj>(value_);
+  }
 
 private:
   void serializeVal(std::ostream &ost) const override {
@@ -68,6 +79,10 @@ public:
   explicit StringObj(std::string_view string)
       : LeechObj(string.size(), ValueType::String), string_(string) {}
 
+  pLeechObj clone() const override {
+    return std::make_unique<StringObj>(string_);
+  }
+
 private:
   void serializeVal(std::ostream &ost) const override {
     for (auto sym : string_)
@@ -75,7 +90,6 @@ private:
   }
 };
 
-using pLeechObj = std::unique_ptr<LeechObj>;
 using Tuple = std::vector<pLeechObj>;
 template <typename T>
 concept ConvToLeechPtr = std::convertible_to<typename T::pointer, LeechObj *>;
@@ -97,6 +111,16 @@ public:
   explicit TupleObj(Cont &&cont) requires
       ConvToLeechPtr<typename Cont::value_type>
       : TupleObj(cont.begin(), cont.end()) {}
+
+  pLeechObj clone() const override {
+    Tuple res;
+    res.reserve(tuple_.size());
+
+    for (auto &&elem : tuple_)
+      res.push_back(elem->clone());
+
+    return std::make_unique<TupleObj>(std::move(res));
+  }
 
 private:
   void serializeVal(std::ostream &ost) const override {
