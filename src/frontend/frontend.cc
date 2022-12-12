@@ -3,7 +3,7 @@
 namespace yy {
 
 Driver::Driver(std::istream &in, std::ostream &out) {
-  m_lexer = std::make_unique<Lexer>(in, out);
+  lexer_ = std::make_unique<Lexer>(in, out);
 }
 
 bool Driver::parse() {
@@ -14,17 +14,17 @@ bool Driver::parse() {
 
 parser::token_type Driver::yylex(parser::semantic_type *yylval,
                                  parser::location_type *yylloc) {
-  parser::token_type token = static_cast<parser::token_type>(m_lexer->yylex());
+  parser::token_type token = static_cast<parser::token_type>(lexer_->yylex());
   if (token == yy::parser::token_type::IDENTIFIER) {
-    std::string name(m_lexer->YYText());
+    std::string name(lexer_->YYText());
     parser::semantic_type tmp;
     tmp.as<std::string>() = name;
     yylval->swap<std::string>(tmp);
   } else if (token == yy::parser::token_type::INTEGER) {
-    yylval->as<int>() = std::atoi(m_lexer->YYText());
+    yylval->as<int>() = std::atoi(lexer_->YYText());
   }
 
-  *yylloc = m_lexer->getCurLocation();
+  *yylloc = lexer_->getCurLocation();
   return token;
 }
 

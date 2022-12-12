@@ -35,7 +35,7 @@ private:
   static inline constexpr size_t numTokens = 10;
 
 private:
-  std::unique_ptr<Lexer> m_lexer = nullptr;
+  std::unique_ptr<Lexer> lexer_ = nullptr;
 };
 
 } // namespace yy

@@ -25,4 +25,5 @@ target_include_directories(
 )
 
 add_library(frontend frontend.cc)
+format_target(lex ${CMAKE_CURRENT_SOURCE_DIR} lLexer.cc)
 target_link_libraries(frontend PUBLIC lex par)

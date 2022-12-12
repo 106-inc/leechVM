@@ -10,7 +10,7 @@
 
 #include "parser.hh"
 
-class Lexer : public yyFlexLexer {
+class Lexer final : public yyFlexLexer {
 private:
   yy::location curLocation{};
   int lastNumOfLine{};
@@ -26,7 +26,7 @@ public:
 
   Lexer(std::istream &in, std::ostream &out) : yyFlexLexer{in, out} {}
 
-  yy::location getCurLocation();
+  yy::location getCurLocation() const;
   int getLastLine() const;
 
   static bool isEmptyLine(const char *str);
