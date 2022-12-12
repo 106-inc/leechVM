@@ -1,9 +1,3 @@
-#include <cstdint>
-#include <memory>
-#include <ostream>
-#include <string>
-#include <vector>
-
 #include "leechfile/leechfile.hh"
 
 namespace leech {
@@ -13,12 +7,8 @@ namespace leech {
  */
 
 void FuncMeta::serialize(std::ostream &ost) const {
-  /* Write FuncMeta size */
-  auto metaSize = serializedSize();
-  serializeNum(ost, metaSize);
-
   /* Write function address */
-  serializeNum(ost, addr);
+  serializeNum<std::uint64_t>(ost, addr);
 
   /* Write constant pool */
   auto cstNum = cstPool.size();
