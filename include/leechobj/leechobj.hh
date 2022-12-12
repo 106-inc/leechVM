@@ -32,6 +32,7 @@ public:
 
   virtual pLeechObj clone() const = 0;
   [[noreturn]] virtual bool compare(LeechObj *obj, CmpOp op) const;
+  [[noreturn]] virtual pLeechObj add(LeechObj *obj) const;
 
   auto getType() const { return type_; }
 
@@ -99,6 +100,13 @@ public:
     default:
       throw std::runtime_error("Uknown cmp op type");
     }
+  }
+
+  pLeechObj add(LeechObj *obj) const override {
+    auto pobj = dynamic_cast<NumberObj *>(obj);
+    if (nullptr == pobj)
+      throw std::runtime_error("Dynamic cast failed");
+    return std::make_unique<NumberObj>(pobj->value_ + value_);
   }
 
 private:

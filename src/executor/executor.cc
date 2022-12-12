@@ -56,7 +56,8 @@ const std::unordered_map<Opcodes, ExecFunc> Executor::execMap_{
        auto name = curFrame.getName(inst.getArg());
        curFrame.push(curFrame.getVar(name)->clone());
      }},
-    {Opcodes::COMPARE_OP, [](const Instruction &inst, State &state) {
+    {Opcodes::COMPARE_OP,
+     [](const Instruction &inst, State &state) {
        auto &curFrame = state.getCurFrame();
        auto op = static_cast<CmpOp>(inst.getArg());
        auto tos1 = curFrame.popGetTos();
@@ -64,6 +65,38 @@ const std::unordered_map<Opcodes, ExecFunc> Executor::execMap_{
 
        bool res = tos1->compare(tos2.get(), op);
 
-       curFrame.emplace<IntObj>(res);
-     }}};
+       curFrame.emplace<IntObj>(static_cast<Integer>(res));
+     }},
+    {Opcodes::POP_JUMP_IF_FALSE,
+     [](const Instruction &inst, State &state) {
+       auto &curFrame = state.getCurFrame();
+       auto dest = inst.getArg();
+       auto tos = curFrame.popGetTos();
+       IntObj fal(0);
+
+       bool res = tos->compare(&fal, CmpOp::EQ);
+       if (res)
+         state.nextPC = dest;
+     }},
+    {Opcodes::POP_JUMP_IF_TRUE,
+     [](const Instruction &inst, State &state) {
+       auto &curFrame = state.getCurFrame();
+       auto dest = inst.getArg();
+       auto tos = curFrame.popGetTos();
+       IntObj fal(0);
+
+       bool res = tos->compare(&fal, CmpOp::EQ);
+       if (!res)
+         state.nextPC = dest;
+     }},
+    {Opcodes::BINARY_ADD,
+     [](const Instruction &, State &state) {
+       auto &curFrame = state.getCurFrame();
+       auto tos1 = curFrame.popGetTos();
+       auto tos2 = curFrame.popGetTos();
+
+       curFrame.push(tos1->add(tos2.get()));
+     }},
+    {Opcodes::POP_TOP,
+     [](const Instruction &, State &state) { state.getCurFrame().pop(); }}};
 } // namespace leech
