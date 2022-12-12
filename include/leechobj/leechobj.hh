@@ -52,7 +52,7 @@ class StringObj final : public LeechObj {
   std::string string_;
 
 public:
-  explicit StringObj(const std::string &string)
+  explicit StringObj(std::string_view string)
       : LeechObj(string.size(), ValueType::String), string_(string) {}
 
 private:
@@ -63,24 +63,27 @@ private:
 };
 
 using pLeechObj = std::unique_ptr<LeechObj>;
-
+using Tuple = std::vector<pLeechObj>;
 template <typename T>
-concept ConvToLeechPtr = std::convertible_to<T, pLeechObj>;
+concept ConvToLeechPtr = std::convertible_to<typename T::pointer, LeechObj *>;
 
 class TupleObj final : public LeechObj {
-  std::vector<pLeechObj> tuple_;
+  Tuple tuple_;
 
 public:
-  template <std::forward_iterator It>
+  template <std::input_iterator It>
   TupleObj(It begin, It end) requires
       ConvToLeechPtr<typename std::iterator_traits<It>::value_type>
-      : tuple_(std::distance(begin, end)) {
-    std::copy(begin, end, tuple_.begin(), tuple_.end());
+      : LeechObj(static_cast<std::size_t>(std::distance(begin, end)),
+                 ValueType::Tuple),
+        tuple_(serializedSize()) {
+    std::move(begin, end, tuple_.begin());
   }
 
-  template <ConvToLeechPtr T>
-  TupleObj(const std::initializer_list<T> &lst)
-      : TupleObj(lst.begin(), lst.end()) {}
+  template <Container Cont>
+  explicit TupleObj(Cont &&cont) requires
+      ConvToLeechPtr<typename Cont::value_type>
+      : TupleObj(cont.begin(), cont.end()) {}
 
 private:
   void serializeVal(std::ostream &ost) const override {
