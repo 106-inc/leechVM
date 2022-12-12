@@ -24,5 +24,8 @@ target_include_directories(
     PUBLIC ${CMAKE_SOURCE_DIR}/include
 )
 
+target_compile_features(par PRIVATE cxx_std_20)
+target_compile_features(lex PRIVATE cxx_std_20)
+
 add_library(frontend frontend.cc lLexer.cc)
 target_link_libraries(frontend PUBLIC lex par)

@@ -57,4 +57,12 @@ void LeechFile::serialize(std::ostream &ost) const {
     inst.serialize(ost);
 }
 
+void LeechFile::dump2LeechFormat(std::ostream &ost) {
+  ost << ".code" << std::endl;
+  for (auto &&instr : code) {
+    ost << OpcodeConv::toName(instr.getOpcode()).value() << " "
+        << static_cast<int>(instr.getArg()) << std::endl;
+  }
+}
+
 } // namespace leech
