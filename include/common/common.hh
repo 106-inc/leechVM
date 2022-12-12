@@ -49,7 +49,6 @@ template <Number T> void serializeNum(std::ostream &ost, T val) {
 
 struct ISerializable {
   virtual void serialize(std::ostream &ost) const = 0;
-  virtual std::size_t serializedSize() const = 0;
   virtual ~ISerializable() = default;
 };
 
@@ -76,8 +75,6 @@ public:
 
   auto getOpcode() const { return opcode_; }
   auto getArg() const { return arg_; }
-
-  constexpr std::size_t serializedSize() const override { return kInstSize; }
 };
 
 } // namespace leech
