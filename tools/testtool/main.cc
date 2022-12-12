@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "class_file/class_file.hh"
+#include "leechfile/leechfile.hh"
 
 using namespace leech;
 
@@ -10,7 +10,7 @@ int main() {
   fm.addr = 0xACAB;
   fm.names = {"hello", "world"};
 
-  ClassFile cf{};
+  LeechFile cf{};
   cf.meta_.funcs.push_back(std::move(fm));
 
   std::ofstream f{};

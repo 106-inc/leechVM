@@ -1,5 +1,5 @@
-#ifndef __INCLUDE_CLASS_FILE_CLASS_FILE_HH__
-#define __INCLUDE_CLASS_FILE_CLASS_FILE_HH__
+#ifndef __INCLUDE_LEECHFILE_LEECHFILE_HH__
+#define __INCLUDE_LEECHFILE_LEECHFILE_HH__
 
 #include <cstdint>
 #include <memory>
@@ -63,7 +63,7 @@ struct Meta final : public ISerializable {
   std::size_t serializedSize() const override { return 0; }
 };
 
-struct ClassFile final : public ISerializable {
+struct LeechFile final : public ISerializable {
   // private:
   Meta meta_;
   std::vector<Byte> code_;
@@ -86,4 +86,4 @@ public:
 
 } // namespace leech
 
-#endif // __INCLUDE_CLASS_FILE_CLASS_FILE_HH__
+#endif // __INCLUDE_LEECHFILE_LEECHFILE_HH__
