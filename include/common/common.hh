@@ -8,6 +8,10 @@ namespace leech {
 
 enum class ValueType : std::uint8_t { Unknown, Integer, Float, String, Tuple };
 
+template <typename T> constexpr auto toUnderlying(T enumVal) {
+  return static_cast<std::underlying_type_t<T>>(enumVal);
+}
+
 using Integer = std::int64_t;
 using Float = double;
 
