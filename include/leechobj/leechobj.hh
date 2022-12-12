@@ -13,25 +13,38 @@
 namespace leech {
 
 class LeechObj : public ISerializable {
-  std::size_t sizeInBytes_{};
+  std::size_t size_{};
   ValueType type_{};
 
 public:
-  LeechObj(std::size_t size, ValueType type)
-      : sizeInBytes_(size), type_(type) {}
+  LeechObj(std::size_t size, ValueType type) : size_(size), type_(type) {}
 
-  std::size_t serializedSize() const override final { return sizeInBytes_; }
+  void serialize(std::ostream &ost) const override final {
+    serializeTypeNSize(ost);
+    serializeVal(ost);
+  }
+  std::size_t serializedSize() const override final { return size_; }
+
+protected:
+  void serializeTypeNSize(std::ostream &ost) const {
+    serializeNum(ost, toUnderlying(type_));
+    serializeNum(ost, size_);
+  }
+
+private:
+  virtual void serializeVal(std::ostream &) const = 0;
 };
 
 template <NumberLeech T> class NumberObj final : public LeechObj {
   T value_{};
 
 public:
-  NumberObj(T value)
+  explicit NumberObj(T value)
       : LeechObj(sizeof(T), typeToValueType<T>()), value_(value) {}
 
-  void serialize(std::ostream &ost) const override {
-    ost.write(reinterpret_cast<char *>(&value_), sizeof(value_));
+private:
+  void serializeVal(std::ostream &ost) const override {
+    serializeNum(ost, value_);
   }
 };
 
@@ -39,10 +52,11 @@ class StringObj final : public LeechObj {
   std::string string_;
 
 public:
-  StringObj(const std::string &string)
+  explicit StringObj(const std::string &string)
       : LeechObj(string.size(), ValueType::String), string_(string) {}
 
-  void serialize(std::ostream &ost) const override {
+private:
+  void serializeVal(std::ostream &ost) const override {
     for (auto sym : string_)
       serializeNum(ost, sym);
   }
@@ -68,7 +82,8 @@ public:
   TupleObj(const std::initializer_list<T> &lst)
       : TupleObj(lst.begin(), lst.end()) {}
 
-  void serialize(std::ostream &ost) const override {
+private:
+  void serializeVal(std::ostream &ost) const override {
     for (auto &&ptr : tuple_)
       ptr->serialize(ost);
   }
