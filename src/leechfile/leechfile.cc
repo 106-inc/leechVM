@@ -44,12 +44,26 @@ std::pair<std::string, FuncMeta> FuncMeta::deserialize(std::istream &ist) {
   auto nameLen = deserializeNum<uint64_t>(ist);
   auto name = deserializeString(ist, nameLen);
 
+  auto addr = deserializeNum<uint64_t>(ist);
+
   auto cstNum = deserializeNum<uint64_t>(ist);
   std::vector<pLeechObj> cstPool{};
-  for (uint32_t i = 0; i < cstNum; ++i)
+  for (uint64_t i = 0; i < cstNum; ++i)
     cstPool.push_back(deserializeObj(ist));
 
-  return {};
+  auto nameNum = deserializeNum<uint64_t>(ist);
+  std::vector<std::string> names{};
+  for (uint64_t i = 0; i < nameNum; ++i) {
+    auto len = deserializeNum<uint64_t>(ist);
+    names.push_back(deserializeString(ist, len));
+  }
+
+  FuncMeta fm{};
+  fm.addr = addr;
+  fm.cstPool = std::move(cstPool);
+  fm.names = std::move(names);
+
+  return {name, std::move(fm)};
 }
 
 /**
