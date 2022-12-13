@@ -75,7 +75,7 @@ template <Number T> T deserializeNum(std::istream &ist) {
 inline std::string deserializeString(std::istream &ist, std::size_t size) {
   std::string res{};
   res.resize(size);
-  if (!ist.read(res.data(), size))
+  if (!ist.read(res.data(), static_cast<std::streamsize>(size)))
     throw std::runtime_error{"Can't read string from istream"};
   return res;
 }
