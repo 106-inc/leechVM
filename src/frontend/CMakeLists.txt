@@ -11,7 +11,7 @@ message(STATUS "flex files generated in: ${FLEX_lexer_OUTPUTS}")
 add_flex_bison_dependency(lexer parser)
 
 add_library(lex ${FLEX_lexer_OUTPUTS})
-add_library(par ${BISON_parser_OUTPUTS})
+add_library(par ${BISON_parser_OUTPUTS} ${CMAKE_SOURCE_DIR}/src/leechobj/leechobj.cc)
 target_include_directories(
   par SYSTEM
   PUBLIC ${GRAMMAR_GEN}
