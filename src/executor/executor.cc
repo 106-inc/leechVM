@@ -32,7 +32,14 @@ void Executor::execute() {
 
     state_.nextPC.reset();
 
-    execMap_.at(curInst.getOpcode())(curInst, state_);
+    auto instF = execMap_.find(curInst.getOpcode());
+    if (instF == execMap_.end()) {
+      std::ostringstream ss;
+      ss << "Unsupported opcode "
+         << static_cast<int>(toUnderlying(curInst.getOpcode()));
+      throw std::runtime_error(ss.str());
+    }
+    instF->second(curInst, state_);
 
     state_.pc = state_.nextPC.value_or(state_.pc + 1);
   }
