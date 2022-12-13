@@ -63,7 +63,7 @@ const std::unordered_map<Opcodes, ExecFunc> Executor::execMap_{
        auto tos1 = curFrame.popGetTos();
        auto tos2 = curFrame.popGetTos();
 
-       bool res = tos1->compare(tos2.get(), op);
+       bool res = tos2->compare(tos1.get(), op);
 
        curFrame.emplace<IntObj>(static_cast<Integer>(res));
      }},

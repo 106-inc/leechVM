@@ -31,12 +31,10 @@ public:
   }
 
   void setVar(std::string_view name, pLeechObj obj) {
-    setVar(std::string(name), std::move(obj));
+    setVar(std::string(name), obj);
   }
 
-  void setVar(const std::string &name, pLeechObj obj) {
-    vars_.at(name) = std::move(obj);
-  }
+  void setVar(const std::string &name, pLeechObj obj) { vars_.at(name) = obj; }
 
   const auto *getVar(const std::string &name) const {
     return vars_.at(name).get();
