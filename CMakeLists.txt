@@ -11,6 +11,10 @@ endif()
 
 project(leech)
 
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  string(APPEND CMAKE_CXX_FLAGS_RELEASE " -O2")
+endif()
+
 macro(check_compiler_version COMPILER VER)
   if(CMAKE_CXX_COMPILER_ID STREQUAL ${COMPILER})
     if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${VER})
