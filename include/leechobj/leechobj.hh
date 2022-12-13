@@ -33,7 +33,6 @@ public:
   virtual pLeechObj clone() const = 0;
   [[noreturn]] virtual bool compare(LeechObj *obj, CmpOp op) const;
   [[noreturn]] virtual pLeechObj add(LeechObj *obj) const;
-  virtual void print() const = 0;
 
   auto getType() const { return type_; }
 
@@ -57,7 +56,6 @@ public:
   void print() const override { std::cout << "None" << std::endl; }
 
   pLeechObj clone() const override { return std::make_unique<NoneObj>(); }
-  void print() const override { std::cout << "None" << std::endl; }
 
 private:
   void serializeVal(std::ostream &) const override {}
@@ -181,15 +179,6 @@ public:
       res.push_back(elem->clone());
 
     return std::make_unique<TupleObj>(std::move(res));
-  }
-
-  void print() const override {
-    std::cout << '(';
-    for (auto &&elem : tuple_) {
-      elem->print();
-      std::cout << ',';
-    }
-    std::cout << ')' << std::endl;
   }
 
 private:
