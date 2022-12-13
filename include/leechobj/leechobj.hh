@@ -16,7 +16,7 @@
 namespace leech {
 
 class LeechObj;
-using pLeechObj = std::unique_ptr<LeechObj>;
+using pLeechObj = std::shared_ptr<LeechObj>;
 
 class LeechObj : public ISerializable {
   std::size_t size_{};
@@ -72,7 +72,7 @@ public:
   explicit NumberObj(T value)
       : LeechObj(sizeof(T), typeToValueType<T>()), value_(value) {}
 
-  void print() const override { std::cout << value_ << std::endl; }
+  void print() const override { std::cout << value_; }
 
   static pLeechObj deserialize(std::istream &ist) {
     deserializeNum<uint64_t>(ist);
@@ -135,9 +135,7 @@ public:
   explicit StringObj(std::string_view string)
       : LeechObj(string.size(), ValueType::String), string_(string) {}
 
-  void print() const override {
-    std::cout << '"' << string_ << '"' << std::endl;
-  }
+  void print() const override { std::cout << '"' << string_ << '"'; }
 
   pLeechObj clone() const override {
     return std::make_unique<StringObj>(string_);
@@ -157,16 +155,13 @@ private:
 };
 
 using Tuple = std::vector<pLeechObj>;
-template <typename T>
-concept ConvToLeechPtr = std::convertible_to<typename T::pointer, LeechObj *>;
 
 class TupleObj final : public LeechObj {
   Tuple tuple_;
 
 public:
   template <std::input_iterator It>
-  TupleObj(It begin, It end) requires
-      ConvToLeechPtr<typename std::iterator_traits<It>::value_type>
+  TupleObj(It begin, It end)
       : LeechObj(static_cast<std::size_t>(std::distance(begin, end)),
                  ValueType::Tuple),
         tuple_(getSize()) {
@@ -174,9 +169,7 @@ public:
   }
 
   template <Container Cont>
-  explicit TupleObj(Cont &&cont) requires
-      ConvToLeechPtr<typename Cont::value_type>
-      : TupleObj(cont.begin(), cont.end()) {}
+  explicit TupleObj(Cont &&cont) : TupleObj(cont.begin(), cont.end()) {}
 
   void print() const override {
     std::cout << '(';
@@ -184,7 +177,7 @@ public:
       elem->print();
       std::cout << ',';
     }
-    std::cout << ')' << std::endl;
+    std::cout << ')';
   }
 
   pLeechObj clone() const override {

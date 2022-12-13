@@ -135,4 +135,27 @@ LeechFile LeechFile::deserialize(std::istream &ist) {
   return {std::move(meta), std::move(code)};
 }
 
+void LeechFile::dump2LeechFormat(std::ostream &ost) {
+  constexpr char blockOffset[] = "    ";
+  constexpr char dataOffset[] = "        ";
+  for (const auto &[name, fmeta] : meta.funcs) {
+    ost << ".func " << name << "(" << fmeta.addr << ")" << std::endl;
+    ost << blockOffset << ".cpool" << std::endl;
+    for (std::size_t i = 0; i < fmeta.cstPool.size(); ++i) {
+      ost << dataOffset << i << ": ";
+      fmeta.cstPool[i]->print();
+      ost << std::endl;
+    }
+    ost << blockOffset << ".names" << std::endl;
+    for (std::size_t i = 0; i < fmeta.names.size(); ++i) {
+      ost << dataOffset << i << ": " << fmeta.names[i] << std::endl;
+    }
+  }
+  ost << blockOffset << ".code" << std::endl;
+  for (auto &&instr : code) {
+    ost << dataOffset << OpcodeConv::toName(instr.getOpcode()).value() << " "
+        << static_cast<int>(instr.getArg()) << std::endl;
+  }
+}
+
 } // namespace leech
