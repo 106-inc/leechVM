@@ -58,6 +58,13 @@ void LeechFile::serialize(std::ostream &ost) const {
 }
 
 void LeechFile::dump2LeechFormat(std::ostream &ost) {
+  for (const auto &[name, fmeta] : meta.funcs) {
+    ost << ".func " << name << std::endl;
+    ost << ".names" << std::endl;
+    for (std::size_t i = 0; i < fmeta.names.size(); ++i) {
+      ost << i << ": " << fmeta.names[i] << std::endl;
+    }
+  }
   ost << ".code" << std::endl;
   for (auto &&instr : code) {
     ost << OpcodeConv::toName(instr.getOpcode()).value() << " "

@@ -51,11 +51,14 @@ program:            funcList                                  {};
 funcList:           funcList func                             {};
                   | func                                      {};
 
-func:               FUNC_DECL IDENTIFIER
+func:               funcHeader
                         cpollBlock namesBlock codeBlock       {
-                                                                driver->currentFunc_ = $2;
-                                                                driver->leechFile_->meta.funcs[$2].addr = driver->globalInstrCount_;
+                                                                auto&& currentFunc =  driver->currentFunc_;
+                                                                driver->leechFile_->meta.funcs[currentFunc].addr = driver->globalInstrCount_;
                                                               };
+
+funcHeader:         FUNC_DECL IDENTIFIER                      { driver->currentFunc_ = $2; }
+
 cpollBlock:         CPOLL_DECL constants                      {};
                   | /* empty */                               {};
 
