@@ -101,7 +101,7 @@ names:              names nameEntry                           {
 
 nameEntry:          INTEGER COLON IDENTIFIER                  { $$ = $3; };
 
-codeBlock:          CODE_DECL code                            { driver->instrCount_ = 0; };
+codeBlock:          CODE_DECL code                            {};
                   | /* empty */                               {};
 
 code:               code codeEntry                            {};
