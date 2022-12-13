@@ -132,7 +132,8 @@ const std::unordered_map<Opcodes, ExecFunc> Executor::execMap_{
 
        state.getCurFrame().fillArgs(args.begin(), args.end());
      }},
-    {Opcodes::RETURN_VALUE, [](const Instruction &, State &state) {
+    {Opcodes::RETURN_VALUE,
+     [](const Instruction &, State &state) {
        auto &fstack = state.funcStack;
        auto tos = state.getCurFrame().popGetTos();
 
@@ -142,5 +143,20 @@ const std::unordered_map<Opcodes, ExecFunc> Executor::execMap_{
          state.nextPC = state.getCurFrame().getRet();
          state.getCurFrame().push(tos);
        }
+     }},
+    {Opcodes::BINARY_SUBSCR,
+     [](const Instruction &, State &state) {
+       auto &curFrame = state.getCurFrame();
+       auto idx = curFrame.popGetTos();
+       auto tuple = curFrame.popGetTos();
+
+       curFrame.push(tuple->subscript(idx.get()));
+     }},
+    {Opcodes::BINARY_TRUE_DIVIDE, [](const Instruction &, State &state) {
+       auto &curFrame = state.getCurFrame();
+       auto two = curFrame.popGetTos();
+       auto one = curFrame.popGetTos();
+
+       curFrame.push(one->div(two.get()));
      }}};
 } // namespace leech
