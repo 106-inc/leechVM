@@ -8,12 +8,12 @@
 #include "leechVM/leechVM.hh"
 
 namespace fs = std::filesystem;
-
+  
 int main(int argc, char **argv) try {
   CLI::App app{"LeechVM"};
   fs::path input{};
   fs::path binaryOutput{};
-  bool fromBinary;
+  bool fromBinary = false;
   app.add_option("input", input, "input file")->required();
   app.add_option("--dump", binaryOutput, "leech -> dinary dump");
   app.add_option("--bin", fromBinary, "execute from binary");
