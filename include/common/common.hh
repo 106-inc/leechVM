@@ -123,8 +123,10 @@ public:
   auto getArg() const { return arg_; }
 
   static Instruction deserialize(std::istream &ist) {
-    throw std::runtime_error{"Not implemented yet"};
-    return {Opcodes::UNKNOWN};
+    auto opcodeVal = deserializeNum<std::underlying_type_t<Opcodes>>(ist);
+    auto opcode = static_cast<Opcodes>(opcodeVal);
+    auto arg = deserializeNum<ArgType>(ist);
+    return {opcode, arg};
   }
 };
 

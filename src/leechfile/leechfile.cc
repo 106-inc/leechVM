@@ -128,7 +128,7 @@ LeechFile LeechFile::deserialize(std::istream &ist) {
   auto meta = Meta::deserialize(ist);
 
   auto instNum = deserializeNum<uint64_t>(ist);
-  std::vector<Instruction> code{instNum};
+  std::vector<Instruction> code{};
   for (uint64_t i = 0; i < instNum; ++i)
     code.push_back(Instruction::deserialize(ist));
 
