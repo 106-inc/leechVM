@@ -110,6 +110,7 @@ const std::unordered_map<Opcodes, ExecFunc> Executor::execMap_{
         Opcodes::PRINT,
         [](const Instruction &, State &state) {
           state.getCurFrame().popGetTos()->print();
+          std::cout << std::endl;
         },
     },
     {Opcodes::CALL_FUNCTION,
