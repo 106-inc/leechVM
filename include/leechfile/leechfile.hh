@@ -40,10 +40,6 @@ struct Meta final : public ISerializable {
   Meta(std::unordered_map<std::string, FuncMeta> &&funcs_);
   Meta(const std::unordered_map<std::string, FuncMeta> &funcs_);
 
-  Meta() = default;
-  Meta(std::unordered_map<std::string, FuncMeta> &&funcs_);
-  Meta(const std::unordered_map<std::string, FuncMeta> &funcs_);
-
   void serialize(std::ostream &ost) const override;
   static Meta deserialize(std::istream &ist);
 };
