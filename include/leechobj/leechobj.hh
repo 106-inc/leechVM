@@ -29,7 +29,7 @@ public:
     serializeVal(ost);
   }
 
-  virtual pLeechObj clone() const = 0;
+  virtual void print() const = 0;
 
 protected:
   void serializeTypeNSize(std::ostream &ost) const {
@@ -48,7 +48,7 @@ class NoneObj final : public LeechObj {
 public:
   NoneObj() : LeechObj(0, ValueType::None) {}
 
-  pLeechObj clone() const override { return std::make_unique<NoneObj>(); }
+  void print() const override { std::cout << "None" << std::endl; }
 
 private:
   void serializeVal(std::ostream &) const override {}
@@ -61,15 +61,7 @@ public:
   explicit NumberObj(T value)
       : LeechObj(sizeof(T), typeToValueType<T>()), value_(value) {}
 
-  pLeechObj clone() const override {
-    return std::make_unique<NumberObj>(value_);
-  }
-
-  static pLeechObj deserialize(std::istream &ist) {
-    deserializeNum<uint64_t>(ist);
-    auto val = deserializeNum<T>(ist);
-    return std::make_unique<NumberObj>(val);
-  }
+  void print() const override { std::cout << value_ << std::endl; }
 
 private:
   void serializeVal(std::ostream &ost) const override {
@@ -87,8 +79,8 @@ public:
   explicit StringObj(std::string_view string)
       : LeechObj(string.size(), ValueType::String), string_(string) {}
 
-  pLeechObj clone() const override {
-    return std::make_unique<StringObj>(string_);
+  void print() const override {
+    std::cout << '"' << string_ << '"' << std::endl;
   }
 
 private:
@@ -120,14 +112,13 @@ public:
       ConvToLeechPtr<typename Cont::value_type>
       : TupleObj(cont.begin(), cont.end()) {}
 
-  pLeechObj clone() const override {
-    Tuple res;
-    res.reserve(tuple_.size());
-
-    for (auto &&elem : tuple_)
-      res.push_back(elem->clone());
-
-    return std::make_unique<TupleObj>(std::move(res));
+  void print() const override {
+    std::cout << '(';
+    for (auto &&elem : tuple_) {
+      elem->print();
+      std::cout << ',';
+    }
+    std::cout << ')' << std::endl;
   }
 
 private:
