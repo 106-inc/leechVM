@@ -98,5 +98,29 @@ const std::unordered_map<Opcodes, ExecFunc> Executor::execMap_{
        curFrame.push(tos1->add(tos2.get()));
      }},
     {Opcodes::POP_TOP,
-     [](const Instruction &, State &state) { state.getCurFrame().pop(); }}};
+     [](const Instruction &, State &state) { state.getCurFrame().pop(); }},
+    {
+        Opcodes::PRINT,
+        [](const Instruction &, State &state) {
+          state.getCurFrame().popGetTos()->print();
+        },
+    },
+    {Opcodes::CALL_FUNCTION,
+     [](const Instruction &inst, State &state) {
+       auto idx = inst.getArg();
+       auto fName = std::string(state.getCurFrame().getName(idx));
+
+       auto *fMeta = &state.pFile->meta.funcs.at(fName);
+       state.nextPC = fMeta->addr;
+       state.funcStack.emplace(fMeta);
+     }},
+    {Opcodes::RETURN_VALUE, [](const Instruction &, State &state) {
+       auto &fstack = state.funcStack;
+       auto tos = state.getCurFrame().popGetTos();
+
+       fstack.pop();
+
+       if (fstack.size() != 0)
+         state.getCurFrame().push(std::move(tos));
+     }}};
 } // namespace leech
