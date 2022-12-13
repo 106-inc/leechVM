@@ -1,9 +1,8 @@
-.func main
+.func fib
     .cpool
         0: 0
         1: 1
         2: 2
-        3: 6
     .names
         0: n
         1: first
@@ -11,8 +10,8 @@
         3: i
         4: tmp
     .code
-            LOAD_CONST               3
-            STORE_FAST               0
+            LOAD_FAST 0
+            STORE_FAST 0
             LOAD_CONST               1
             STORE_FAST               1
             LOAD_CONST               1
@@ -45,3 +44,15 @@
             PRINT
             LOAD_CONST               0
             RETURN_VALUE
+
+
+.func main
+    .cpool
+        0: 0
+        1: 6
+    .names
+        0: fib
+    .code
+        LOAD_CONST 1
+        CALL_FUNCTION 0
+        RETURN_VALUE
