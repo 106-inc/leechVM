@@ -15,7 +15,7 @@ namespace leech {
 
 struct FuncMeta final : public ISerializable {
   FuncAddr addr;
-  std::vector<std::unique_ptr<LeechObj>> cstPool{};
+  std::vector<std::shared_ptr<LeechObj>> cstPool{};
   std::vector<std::string> names;
 
   void serialize(std::ostream &ost) const override;

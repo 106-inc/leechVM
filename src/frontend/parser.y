@@ -16,6 +16,7 @@
 
     #include "common/common.hh"
     #include "common/opcodes.hh"
+    #include "leechobj/leechobj.hh"
 }
 
 %code {
@@ -37,7 +38,11 @@ namespace yy
        RRB                    ")"
        COMMA                  ","
 
-%nterm<leech::Instruction>    instruction;
+%nterm<leech::Instruction>      instruction;
+%nterm<leech::pLeechObj>        leechObj
+%nterm<leech::pLeechObj>        primitiveTy
+%nterm<leech::pLeechObj>        tupple
+%nterm<std::string>             nameEntry
 
 %%
 
@@ -47,32 +52,48 @@ funcList:           funcList func                             {};
                   | func                                      {};
 
 func:               FUNC_DECL IDENTIFIER
-                        cpollBlock namesBlock codeBlock       {};
+                        cpollBlock namesBlock codeBlock       {
+                                                                driver->currentFunc_ = $2;
+                                                                driver->leechFile_->meta.funcs[$2].addr = driver->globalInstrCount_;
+                                                              };
 cpollBlock:         CPOLL_DECL constants                      {};
                   | /* empty */                               {};
 
 constants:          constants leechObjEntry                   {};
                   | leechObjEntry                             {};
 
-leechObjEntry:      INTEGER COLON leechObj                    {};
+leechObjEntry:      INTEGER COLON leechObj                    {
+                                                                auto&& currentFunc = driver->currentFunc_;
+                                                                driver->leechFile_->meta.funcs[currentFunc].cstPool.emplace_back($3);
+                                                              };
 
-leechObj:           primitiveTy                               {};
-                  | array                                     {};
+leechObj:           primitiveTy                               { $$ = $1; };
+                  | tupple                                    { $$ = $1; };
 
-primitiveTy:        IDENTIFIER                                {};
-                  | INTEGER                                   {};
+primitiveTy:        IDENTIFIER                                { $$ = std::make_shared<leech::StringObj>($1); };
+                  | INTEGER                                   { $$ = std::make_shared<leech::NumberObj<std::int64_t>>($1); };
 
-array:              LRB arrayArgs RRB                         {};
-arrayArgs:          arrayArgs COMMA primitiveTy               {};
-                  | primitiveTy                               {};
+tupple:             LRB tuppleArgs RRB                        {
+                                                                auto&& args = driver->tupleArgs_;
+                                                                $$ = std::make_shared<leech::TupleObj>(args.begin(), args.end());
+                                                                args.clear();
+                                                              };
+tuppleArgs:         tuppleArgs COMMA primitiveTy              { driver->tupleArgs_.emplace_back($3); };
+                  | primitiveTy                               { driver->tupleArgs_.emplace_back($1); };
 
 namesBlock:         NAMES_DECL names                          {};
                   | /* empty */                               {};
 
-names:              names nameEntry                           {};
-                  | nameEntry                                 {};
+names:              names nameEntry                           {
+                                                                auto&& currentFunc = driver->currentFunc_;
+                                                                driver->leechFile_->meta.funcs[currentFunc].names.emplace_back($2);
+                                                              };
+                  | nameEntry                                 {
+                                                                auto&& currentFunc = driver->currentFunc_;
+                                                                driver->leechFile_->meta.funcs[currentFunc].names.emplace_back($1);
+                                                              };
 
-nameEntry:          INTEGER COLON IDENTIFIER                  {};
+nameEntry:          INTEGER COLON IDENTIFIER                  { $$ = $3; };
 
 codeBlock:          CODE_DECL code                            { driver->instrCount_ = 0; };
                   | /* empty */                               {};

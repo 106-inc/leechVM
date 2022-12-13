@@ -37,6 +37,8 @@ private:
       std::make_shared<leech::LeechFile>();
   std::unordered_map<std::string, leech::FuncAddr> labels_{};
   std::unordered_map<std::string, leech::FuncAddr> forwardBranches_{};
+  leech::Tuple tupleArgs_{};
+  std::string currentFunc_{};
   std::size_t instrCount_ = 0;
   std::size_t globalInstrCount_ = 0;
 };
