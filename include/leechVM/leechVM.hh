@@ -8,16 +8,18 @@ namespace leech {
 
 class LeechVM final {
 public:
+  LeechVM() = default;
   LeechVM(const LeechVM &) = delete;
   LeechVM(LeechVM &&) = delete;
   LeechVM &operator=(const LeechVM &) = delete;
   LeechVM &operator=(LeechVM &&) = delete;
 
-  LeechVM(std::istream &in, std::ostream &out) : driver_{in, out} {}
+  void generateLeechFile(std::istream &in, bool isFromBinary);
+  void dumpBinary(std::ostream &out);
   void run();
 
 private:
-  yy::Driver driver_;
+  std::shared_ptr<LeechFile> leechFile_ = nullptr;
 };
 
 } // namespace leech
