@@ -52,12 +52,12 @@ funcList:           funcList func                             {};
                   | func                                      {};
 
 func:               funcHeader
-                        cpollBlock namesBlock codeBlock       {
-                                                                auto&& currentFunc =  driver->currentFunc_;
-                                                                driver->leechFile_->meta.funcs[currentFunc].addr = driver->globalInstrCount_;
-                                                              };
+                        cpollBlock namesBlock codeBlock       {};
 
-funcHeader:         FUNC_DECL IDENTIFIER                      { driver->currentFunc_ = $2; }
+funcHeader:         FUNC_DECL IDENTIFIER                      {
+                                                                driver->currentFunc_ = $2;
+                                                                driver->leechFile_->meta.funcs[$2].addr = driver->globalInstrCount_;
+                                                              }
 
 cpollBlock:         CPOLL_DECL constants                      {};
                   | /* empty */                               {};

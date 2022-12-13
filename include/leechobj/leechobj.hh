@@ -68,7 +68,7 @@ public:
   explicit NumberObj(T value)
       : LeechObj(sizeof(T), typeToValueType<T>()), value_(value) {}
 
-  void print() const override { std::cout << value_ << std::endl; }
+  void print() const override { std::cout << value_; }
 
   pLeechObj clone() const override {
     return std::make_unique<NumberObj>(value_);
@@ -125,9 +125,7 @@ public:
   explicit StringObj(std::string_view string)
       : LeechObj(string.size(), ValueType::String), string_(string) {}
 
-  void print() const override {
-    std::cout << '"' << string_ << '"' << std::endl;
-  }
+  void print() const override { std::cout << '"' << string_ << '"'; }
 
   pLeechObj clone() const override {
     return std::make_unique<StringObj>(string_);
@@ -163,7 +161,7 @@ public:
       elem->print();
       std::cout << ',';
     }
-    std::cout << ')' << std::endl;
+    std::cout << ')';
   }
 
   pLeechObj clone() const override {
