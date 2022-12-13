@@ -47,6 +47,18 @@ std::pair<std::string, FuncMeta> FuncMeta::deserialize(std::istream &ist) {
   auto cstNum = deserializeNum<uint64_t>(ist);
   std::vector<pLeechObj> cstPool{};
   for (uint32_t i = 0; i < cstNum; ++i) {
+    auto cstTyVal = deserializeNum<std::underlying_type_t<ValueType>>(ist);
+    auto cstTy = static_cast<ValueType>(cstTyVal);
+
+    switch (cstTy) {
+    case ValueType::Integer:
+      cstPool.push_back(IntObj::deserialize(ist));
+      break;
+    case ValueType::Float:
+      cstPool.push_back(FloatObj::deserialize(ist));
+    default:
+      break;
+    }
     /* TODO: Read type, read size, deserialize */
   }
 

@@ -3,7 +3,9 @@
 
 #include <algorithm>
 #include <concepts>
+#include <istream>
 #include <memory>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -61,6 +63,12 @@ public:
 
   pLeechObj clone() const override {
     return std::make_unique<NumberObj>(value_);
+  }
+
+  static pLeechObj deserialize(std::istream &ist) {
+    deserializeNum<uint64_t>(ist);
+    auto val = deserializeNum<T>(ist);
+    return std::make_unique<NumberObj>(val);
   }
 
 private:

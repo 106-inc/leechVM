@@ -66,7 +66,7 @@ inline void serializeString(std::ostream &ost, std::string_view sv) {
 }
 
 template <Number T> T deserializeNum(std::istream &ist) {
-  T num = 0;
+  T num{};
   if (!ist.read(reinterpret_cast<char *>(num), sizeof(num)))
     throw std::runtime_error{"Can't read number from istream"};
   return num;
