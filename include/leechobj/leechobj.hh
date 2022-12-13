@@ -94,11 +94,11 @@ public:
     if (pObj == nullptr)
       throw std::runtime_error("Dynamic cast failed");
     return std::make_shared<NumberObj<Float>>(static_cast<Float>(value_) /
-                                              pObj->value_);
+                                              static_cast<Float>(pObj->value_));
   }
 
   bool compare(LeechObj *obj, CmpOp op) const override {
-    if (obj->getType() != getType())
+    if (obj->getType() != getType() || getType() != ValueType::Integer)
       throw std::invalid_argument("Can't compare");
 
     auto *pObj = dynamic_cast<NumberObj<T> *>(obj);
@@ -201,7 +201,7 @@ public:
 
     auto *numObj = dynamic_cast<IntObj *>(pobj);
 
-    return tuple_.at(numObj->getVal());
+    return tuple_.at(static_cast<std::size_t>(numObj->getVal()));
   }
 
   pLeechObj clone() const override {
