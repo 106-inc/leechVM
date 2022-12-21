@@ -27,7 +27,7 @@ public:
   StackFrame &operator=(StackFrame &&) = default;
 
   template <class T, typename... Args>
-  void emplace(Args &&...args) requires std::derived_from<T, LeechObj> {
+  void emplace(Args &&... args) requires std::derived_from<T, LeechObj> {
     dataStack_.emplace(new T(std::forward<Args>(args)...));
   }
 
@@ -35,8 +35,8 @@ public:
   void setRet(auto val) { retAddr_ = val; }
 
   template <std::input_iterator T>
-  void fillArgs(T beg, T end) requires
-      std::is_same_v<typename std::iterator_traits<T>::value_type, pLeechObj> {
+  void fillArgs(T beg, T end) requires std::is_same_v<
+      typename std::iterator_traits<T>::value_type, pLeechObj> {
     for (auto &name : pmeta_->names) {
       if (beg == end)
         break;

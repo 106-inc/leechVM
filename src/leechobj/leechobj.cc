@@ -14,6 +14,13 @@ pLeechObj LeechObj::add(LeechObj *obj) const {
   throw std::invalid_argument(ss.str());
 }
 
+pLeechObj LeechObj::sub(LeechObj *obj) const {
+  std::ostringstream ss;
+  ss << "Substracting of " << toUnderlying(type_) << " and "
+     << toUnderlying(obj->type_) << " is not supported yet.";
+  throw std::invalid_argument(ss.str());
+}
+
 pLeechObj LeechObj::div(LeechObj *obj) const {
   std::ostringstream ss;
   ss << "Division of " << toUnderlying(type_) << " and "

@@ -152,11 +152,19 @@ const std::unordered_map<Opcodes, ExecFunc> Executor::execMap_{
 
        curFrame.push(tuple->subscript(idx.get()));
      }},
-    {Opcodes::BINARY_TRUE_DIVIDE, [](const Instruction &, State &state) {
+    {Opcodes::BINARY_TRUE_DIVIDE,
+     [](const Instruction &, State &state) {
        auto &curFrame = state.getCurFrame();
        auto two = curFrame.popGetTos();
        auto one = curFrame.popGetTos();
 
        curFrame.push(one->div(two.get()));
+     }},
+    {Opcodes::BINARY_SUBTRACT, [](const Instruction &, State &state) {
+       auto &curFrame = state.getCurFrame();
+       auto tos1 = curFrame.popGetTos();
+       auto tos2 = curFrame.popGetTos();
+
+       curFrame.push(tos2->sub(tos1.get()));
      }}};
 } // namespace leech
