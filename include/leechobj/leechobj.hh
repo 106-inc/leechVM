@@ -34,6 +34,7 @@ public:
   virtual pLeechObj clone() const = 0;
   [[noreturn]] virtual bool compare(LeechObj *obj, CmpOp op) const;
   [[noreturn]] virtual pLeechObj add(LeechObj *obj) const;
+  [[noreturn]] virtual pLeechObj sub(LeechObj *obj) const;
   [[noreturn]] virtual pLeechObj div(LeechObj *obj) const;
   [[noreturn]] virtual pLeechObj subscript(LeechObj *obj) const;
 
@@ -123,6 +124,13 @@ public:
     default:
       throw std::runtime_error("Uknown cmp op type");
     }
+  }
+
+  pLeechObj sub(LeechObj *obj) const override {
+    auto pobj = dynamic_cast<NumberObj *>(obj);
+    if (nullptr == pobj)
+      throw std::runtime_error("Dynamic cast failed");
+    return std::make_unique<NumberObj>(value_ - pobj->value_);
   }
 
   pLeechObj add(LeechObj *obj) const override {

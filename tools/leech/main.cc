@@ -5,6 +5,7 @@
 #include <CLI/Formatter.hpp>
 
 #include "leechVM/leechVM.hh"
+#include "timer/timer.hh"
 
 namespace fs = std::filesystem;
 
@@ -14,8 +15,8 @@ int main(int argc, char **argv) try {
   fs::path binaryOutput{};
   bool fromBinary = false;
   app.add_option("input", input, "input file")->required();
-  app.add_option("--dump", binaryOutput, "leech -> dinary dump");
-  app.add_option("--bin", fromBinary, "execute from binary");
+  app.add_flag("--dump", binaryOutput, "leech -> dinary dump");
+  app.add_flag("--bin", fromBinary, "execute from binary");
 
   try {
     app.parse(argc, argv);
@@ -34,7 +35,10 @@ int main(int argc, char **argv) try {
     std::ofstream out(binaryOutput.c_str());
     vm.dumpBinary(out);
   } else {
+    timer::Timer timer;
     vm.run();
+    auto time = timer.elapsed_mcs();
+    std::cout << "Time: " << static_cast<double>(time) * 1e-3 << " ms" << std::endl;
   }
 } catch (const std::exception &e) {
   std::cerr << e.what() << std::endl;
