@@ -15,10 +15,10 @@ jobs:
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     name: ${{ matrix.generator }} ${{ matrix.compiler }} ${{ matrix.build_type }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
-        compiler: [g++-10, clang++-12]
+        compiler: [g++, clang++]
         generator: [Unix Makefiles, Ninja]
         build_type: [Debug, Release]
         include:
@@ -36,9 +36,6 @@ jobs:
     - name: Install Ninja
       if: ${{ matrix.generator == 'Ninja' }}
       run: sudo apt install ninja-build
-
-    - name: Install spdlog
-      run: sudo apt install libspdlog-dev
 
     - name: Install GTests
       run: sudo apt-get install libgtest-dev
