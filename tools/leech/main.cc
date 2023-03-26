@@ -1,5 +1,4 @@
 #include <filesystem>
-#include <spdlog/spdlog.h>
 
 #include <CLI/App.hpp>
 #include <CLI/Config.hpp>
@@ -38,6 +37,6 @@ int main(int argc, char **argv) try {
     vm.run();
   }
 } catch (const std::exception &e) {
-  spdlog::error(e.what());
+  std::cerr << e.what() << std::endl;
   return 1;
 }
