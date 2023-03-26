@@ -46,7 +46,7 @@ if(BUILD_TESTS)
   enable_testing()
 endif()
 
-find_package(BISON 3.7 REQUIRED)
+find_package(BISON 3.5 REQUIRED)
 find_package(FLEX REQUIRED)
 
 add_subdirectory(docs)
