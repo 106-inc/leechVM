@@ -15,6 +15,7 @@ constexpr std::string_view kMainFuncName = "main";
 class StackFrame final {
   const FuncMeta *pmeta_ = nullptr;
   std::stack<pLeechObj> dataStack_{};
+  // TODO: Store pc in frame
   std::uint64_t retAddr_ = {};
   std::unordered_map<std::string, pLeechObj> vars_{};
 

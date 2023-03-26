@@ -8,7 +8,7 @@
 #include "leechVM/leechVM.hh"
 
 namespace fs = std::filesystem;
-  
+
 int main(int argc, char **argv) try {
   CLI::App app{"LeechVM"};
   fs::path input{};
