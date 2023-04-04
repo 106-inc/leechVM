@@ -38,7 +38,8 @@ int main(int argc, char **argv) try {
     timer::Timer timer;
     vm.run();
     auto time = timer.elapsed_mcs();
-    std::cout << "Time: " << static_cast<double>(time) * 1e-3 << " ms" << std::endl;
+    std::cout << "Time: " << static_cast<double>(time) * 1e-3 << " ms"
+              << std::endl;
   }
 } catch (const std::exception &e) {
   std::cerr << e.what() << std::endl;

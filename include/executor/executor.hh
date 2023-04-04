@@ -27,7 +27,6 @@ public:
   StackFrame(StackFrame &&) = default;
   StackFrame &operator=(StackFrame &&) = default;
 
-
   template <class T, typename... Args> void emplace(Args &&...args) {
     dataStack_.emplace(new T(std::forward<Args>(args)...));
   }

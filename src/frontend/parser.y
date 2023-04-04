@@ -5,7 +5,7 @@
 %define parse.lac full
 %locations
 %define api.value.type variant
-%define parse.error custom
+%define parse.error detailed
 
 %param {Driver* driver}
 
@@ -152,10 +152,5 @@ namespace yy {
   parser::token_type yylex(parser::semantic_type* yylval, parser::location_type* yylloc, Driver* driver)
   {
     return driver->yylex(yylval, yylloc);
-  }
-
-  void parser::report_syntax_error(parser::context const& ctx) const
-  {
-    driver->reportSyntaxError(ctx);
   }
 }
