@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <sys/mman.h>
 #include <type_traits>
+#include <utility>
 
 namespace leech::gc {
 
@@ -14,15 +15,40 @@ template <std::uintptr_t StartAddr, std::size_t Size> class Region final {
 
     Allocator() = default;
 
-    template <class U> Allocator(const Allocator<U> &other) {}
+    template <class U> Allocator([[maybe_unused]] const Allocator<U> &other) {}
 
-    [[nodiscard]] auto allocate(std::size_t size) {}
+    [[nodiscard]] auto allocate(std::size_t size) {
+      return Region::allocateInstance<T>(size);
+    }
 
-    void deallocate(T *ptr, std::size_t size) noexcept {}
+    void deallocate([[maybe_unused]] T *ptr,
+                    [[maybe_unused]] std::size_t size) noexcept {}
   };
 
+  static inline auto curOffset = 0;
+
+  [[nodiscard]] static auto getStartPtr() {
+    return reinterpret_cast<void *>(StartAddr);
+  }
+
 public:
-  Region();
+  Region() = delete;
+
+  template <class T> static auto getAllocator() { return Allocator<T>(); }
+
+  [[nodiscard]] static auto allocateRaw(std::size_t num_of_bytes) {
+    auto newOffset = curOffset + num_of_bytes;
+
+    if (newOffset > Size)
+      throw std::runtime_error{"Out of memory"};
+
+    return getStartPtr() + std::exchange(curOffset, newOffset);
+  }
+
+  template <class T>
+  [[nodiscard]] static auto allocateInstance(std::size_t num_elems = 1) {
+    return reinterpret_cast<T *>(allocateRaw(num_elems * sizeof(T)));
+  }
 };
 
 class MemoryManager final {
@@ -67,7 +93,7 @@ class MemoryManager final {
 public:
   MemoryManager() {
     if (block_.as<decltype(kStartAddr)>() != kStartAddr)
-      throw std::runtime_error{"Trying to create more than one mem block"};
+      throw std::logic_error{"Trying to create more than one mem block"};
   }
 
 private:
