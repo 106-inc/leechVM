@@ -34,7 +34,7 @@ template <typename T>
 constexpr bool Number_v = NumberLeech_v<T> || std::is_integral_v<T>;
 
 template <typename T> inline constexpr ValueType typeToValueType() {
-  static_assert(NumberLeech_v<T>, "");
+  static_assert(NumberLeech_v<T>);
   if constexpr (std::is_same_v<T, Integer>)
     return ValueType::Integer;
   return ValueType::Float;
@@ -86,13 +86,13 @@ class Instruction final : public ISerializable {
   ArgType arg_{};
 
 public:
-  Instruction(Opcodes opcode, ArgType arg = 0) : opcode_(opcode), arg_(arg) {
+  explicit Instruction(Opcodes opcode, ArgType arg = 0) : opcode_(opcode), arg_(arg) {
     if (opcode_ == Opcodes::UNKNOWN)
       throw std::invalid_argument(
           "Trying to create Instruction with UNKNOWN opcode");
   }
 
-  Instruction(std::underlying_type_t<Opcodes> opcode, ArgType arg = 0)
+  explicit Instruction(std::underlying_type_t<Opcodes> opcode, ArgType arg = 0)
       : Instruction(static_cast<Opcodes>(opcode), arg) {}
 
   Instruction() = default;
@@ -102,15 +102,15 @@ public:
     serializeNum(ost, arg_);
   }
 
-  auto getOpcode() const { return opcode_; }
-  auto getArg() const { return arg_; }
+  [[nodiscard]] auto getOpcode() const { return opcode_; }
+  [[nodiscard]] auto getArg() const { return arg_; }
   void setArg(ArgType arg) {arg_ = arg;}
 
-  static Instruction deserialize(std::istream &ist) {
+  static auto deserialize(std::istream &ist) {
     auto opcodeVal = deserializeNum<std::underlying_type_t<Opcodes>>(ist);
     auto opcode = static_cast<Opcodes>(opcodeVal);
     auto arg = deserializeNum<ArgType>(ist);
-    return {opcode, arg};
+    return Instruction{opcode, arg};
   }
 };
 

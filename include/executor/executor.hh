@@ -20,7 +20,7 @@ class StackFrame final {
   std::unordered_map<std::string, pLeechObj> vars_{};
 
 public:
-  StackFrame(const FuncMeta *pmeta);
+  explicit StackFrame(const FuncMeta *pmeta);
 
   StackFrame(const StackFrame &) = delete;
   StackFrame &operator=(const StackFrame &) = delete;
@@ -31,7 +31,7 @@ public:
     dataStack_.emplace(new T(std::forward<Args>(args)...));
   }
 
-  auto getRet() const { return retAddr_; }
+  [[nodiscard]] auto getRet() const { return retAddr_; }
   template <class T> void setRet(T val) { retAddr_ = val; }
 
   template <class InpIt> void fillArgs(InpIt beg, InpIt end) {
@@ -46,23 +46,31 @@ public:
     setVar(std::string(name), obj);
   }
 
-  auto stackSize() const { return dataStack_.size(); }
+  [[nodiscard]] auto stackSize() const { return dataStack_.size(); }
 
   void setVar(const std::string &name, pLeechObj obj) { vars_.at(name) = obj; }
 
-  auto getVar(const std::string &name) const { return vars_.at(name); }
+  [[nodiscard]] auto getVar(const std::string &name) const {
+    return vars_.at(name);
+  }
 
-  auto getVar(std::string_view name) const { return getVar(std::string(name)); }
+  [[nodiscard]] auto getVar(std::string_view name) const {
+    return getVar(std::string(name));
+  }
 
   void push(pLeechObj obj);
 
-  auto getConst(ArgType idx) const { return pmeta_->cstPool.at(idx); }
+  [[nodiscard]] auto getConst(ArgType idx) const {
+    return pmeta_->cstPool.at(idx);
+  }
 
-  std::string_view getName(ArgType idx) const { return pmeta_->names.at(idx); }
+  [[nodiscard]] std::string_view getName(ArgType idx) const {
+    return pmeta_->names.at(idx);
+  }
 
-  auto top() const { return dataStack_.top(); }
+  [[nodiscard]] auto top() const { return dataStack_.top(); }
 
-  auto popGetTos() {
+  [[nodiscard]] auto popGetTos() {
     auto tos = top()->clone();
     pop();
     return tos;
@@ -80,12 +88,14 @@ struct State final {
   std::optional<std::uint64_t> nextPC{};
 
   State() = default;
-  State(LeechFile *pfile);
+  explicit State(LeechFile *pfile);
 
   State(const State &) = default;
   State &operator=(const State &) = default;
 
-  const auto &getInst(std::uint64_t idx) const { return pFile->code.at(idx); }
+  [[nodiscard]] const auto &getInst(std::uint64_t idx) const {
+    return pFile->code.at(idx);
+  }
 
   auto &getCurFrame() { return funcStack.top(); }
 };
@@ -97,7 +107,7 @@ class Executor final {
   static const std::unordered_map<Opcodes, ExecFunc> execMap_;
 
 public:
-  Executor(LeechFile *leechFile) : state_(leechFile) {}
+  explicit Executor(LeechFile *leechFile) : state_(leechFile) {}
 
   void execute();
 };
