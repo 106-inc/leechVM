@@ -1,5 +1,4 @@
 #include <filesystem>
-#include <spdlog/spdlog.h>
 
 #include <CLI/App.hpp>
 #include <CLI/Config.hpp>
@@ -39,9 +38,10 @@ int main(int argc, char **argv) try {
     timer::Timer timer;
     vm.run();
     auto time = timer.elapsed_mcs();
-    std::cout << "Time: " << static_cast<double>(time) * 1e-3 << " ms" << std::endl;
+    std::cout << "Time: " << static_cast<double>(time) * 1e-3 << " ms"
+              << std::endl;
   }
 } catch (const std::exception &e) {
-  spdlog::error(e.what());
+  std::cerr << e.what() << std::endl;
   return 1;
 }

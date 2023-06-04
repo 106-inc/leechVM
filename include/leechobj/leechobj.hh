@@ -2,7 +2,6 @@
 #define __INCLUDE_LEECHOBJ_LEECHOBJ_HH__
 
 #include <algorithm>
-#include <concepts>
 #include <istream>
 #include <memory>
 #include <ostream>
@@ -68,7 +67,8 @@ private:
   void serializeVal(std::ostream &) const override {}
 };
 
-template <NumberLeech T> class NumberObj final : public LeechObj {
+template <typename T> class NumberObj final : public LeechObj {
+  static_assert(NumberLeech_v<T>);
   T value_{};
 
 public:
@@ -183,15 +183,15 @@ class TupleObj final : public LeechObj {
   Tuple tuple_;
 
 public:
-  template <std::input_iterator It>
-  TupleObj(It begin, It end)
+  template <class InpIt>
+  TupleObj(InpIt begin, InpIt end)
       : LeechObj(static_cast<std::size_t>(std::distance(begin, end)),
                  ValueType::Tuple),
         tuple_(getSize()) {
     std::move(begin, end, tuple_.begin());
   }
 
-  template <Container Cont>
+  template <class Cont>
   explicit TupleObj(Cont &&cont) : TupleObj(cont.begin(), cont.end()) {}
 
   void print() const override {
