@@ -25,10 +25,6 @@ public:
   friend parser;
 
 private:
-  void reportSyntaxError(const parser::context &ctx);
-  void reportExpctdTok(const yy::parser::context &ctx);
-  void reportUnexpctdTok(const yy::parser::context &ctx);
-
   static inline constexpr size_t numTokens = 10;
 
 private:
