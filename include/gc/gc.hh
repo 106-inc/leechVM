@@ -36,6 +36,8 @@ public:
 
   template <class T> static auto getAllocator() { return Allocator<T>(); }
 
+  static void reset() { curOffset = 0; }
+
   [[nodiscard]] static auto allocateRaw(std::size_t num_of_bytes) {
     auto newOffset = curOffset + num_of_bytes;
 
