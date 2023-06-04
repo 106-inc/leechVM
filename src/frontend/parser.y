@@ -1,3 +1,4 @@
+%require "3.5"
 %language "c++"
 %skeleton "lalr1.cc"
 
@@ -5,7 +6,7 @@
 %define parse.lac full
 %locations
 %define api.value.type variant
-%define parse.error detailed
+%define parse.error verbose
 
 %param {Driver* driver}
 
