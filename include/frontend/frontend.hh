@@ -20,17 +20,16 @@ public:
   parser::token_type yylex(parser::semantic_type *yylval,
                            parser::location_type *yylloc);
   bool parse();
-  std::shared_ptr<leech::LeechFile> getLeechFile() const { return leechFile_; }
+  [[nodiscard]] auto getLeechFile() const { return leechFile_; }
 
   friend parser;
 
 private:
   static inline constexpr size_t numTokens = 10;
 
-private:
-  std::unique_ptr<Lexer> lexer_ = nullptr;
-  std::shared_ptr<leech::LeechFile> leechFile_ =
-      std::make_shared<leech::LeechFile>();
+  std::unique_ptr<Lexer> lexer_{};
+  std::shared_ptr<leech::LeechFile> leechFile_{
+      std::make_shared<leech::LeechFile>()};
   std::unordered_map<std::string, leech::FuncAddr> labels_{};
   std::unordered_map<std::string, leech::FuncAddr> forwardBranches_{};
   leech::Tuple tupleArgs_{};
