@@ -104,7 +104,6 @@ using ExecFunc = std::function<void(const Instruction &, State &)>;
 
 class Executor final {
   State state_{};
-  static const std::unordered_map<Opcodes, ExecFunc> execMap_;
 
 public:
   explicit Executor(LeechFile *leechFile) : state_(leechFile) {}

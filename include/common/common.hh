@@ -2,6 +2,8 @@
 #define __INCLUDE_COMMON_COMMON_HH__
 
 #include <iostream>
+#include <stdexcept>
+#include <string>
 #include <type_traits>
 
 #include "opcodes.hh"
@@ -9,7 +11,14 @@
 namespace leech {
 
 using FuncAddr = std::uint64_t;
-enum class ValueType : std::uint8_t { Unknown, Integer, Float, String, Tuple, None };
+enum class ValueType : std::uint8_t {
+  Unknown,
+  Integer,
+  Float,
+  String,
+  Tuple,
+  None
+};
 
 enum class CmpOp : std::uint8_t {
   LE = 0,
@@ -28,7 +37,8 @@ using Integer = std::int64_t;
 using Float = double;
 
 template <typename T>
-constexpr bool NumberLeech_v = std::is_same_v<T, Integer> || std::is_same_v<T, Float>;
+constexpr bool NumberLeech_v =
+    std::is_same_v<T, Integer> || std::is_same_v<T, Float>;
 
 template <typename T>
 constexpr bool Number_v = NumberLeech_v<T> || std::is_integral_v<T>;
@@ -39,7 +49,6 @@ template <typename T> inline constexpr ValueType typeToValueType() {
     return ValueType::Integer;
   return ValueType::Float;
 }
-
 
 template <typename T> void serializeNum(std::ostream &ost, T val) {
   static_assert(Number_v<T>);
@@ -81,15 +90,29 @@ constexpr std::size_t kArgSize = sizeof(ArgType);
 constexpr std::size_t kInstSize =
     sizeof(std::underlying_type_t<Opcodes>) + kArgSize;
 
+struct State;
+
 class Instruction final : public ISerializable {
+  using Callback = void (*)(const Instruction &, State &);
   Opcodes opcode_{};
   ArgType arg_{};
+  Callback callback{};
+
+  static const std::unordered_map<Opcodes, Callback> opcToCallback;
 
 public:
-  explicit Instruction(Opcodes opcode, ArgType arg = 0) : opcode_(opcode), arg_(arg) {
-    if (opcode_ == Opcodes::UNKNOWN)
+  explicit Instruction(Opcodes opcode, ArgType arg = 0)
+      : opcode_(opcode), arg_(arg) {
+    if (Opcodes::UNKNOWN == opcode_)
       throw std::invalid_argument(
           "Trying to create Instruction with UNKNOWN opcode");
+
+    if (auto callback_it = opcToCallback.find(opcode_);
+        callback_it != opcToCallback.end())
+      callback = callback_it->second;
+    else
+      throw std::runtime_error{"Unknown inst opcode: " +
+                               std::to_string(toUnderlying(opcode_))};
   }
 
   explicit Instruction(std::underlying_type_t<Opcodes> opcode, ArgType arg = 0)
@@ -104,7 +127,9 @@ public:
 
   [[nodiscard]] auto getOpcode() const { return opcode_; }
   [[nodiscard]] auto getArg() const { return arg_; }
-  void setArg(ArgType arg) {arg_ = arg;}
+  void setArg(ArgType arg) { arg_ = arg; }
+
+  void execute(State &state) const { callback(*this, state); }
 
   static auto deserialize(std::istream &ist) {
     auto opcodeVal = deserializeNum<std::underlying_type_t<Opcodes>>(ist);

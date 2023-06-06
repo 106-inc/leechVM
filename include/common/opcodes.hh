@@ -40,8 +40,8 @@ private:
   }
 
   template <typename Map, typename Key>
-  static auto getOptFromMap(const Map &map, const Key &key)
-      -> std::optional<typename Map::mapped_type> {
+  static std::optional<typename Map::mapped_type>
+  getOptFromMap(const Map &map, const Key &key) {
     if (auto found = map.find(key); found != map.end())
       return found->second;
     return std::nullopt;
