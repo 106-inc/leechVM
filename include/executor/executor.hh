@@ -100,8 +100,6 @@ struct State final {
   auto &getCurFrame() { return funcStack.top(); }
 };
 
-using ExecFunc = std::function<void(const Instruction &, State &)>;
-
 class Executor final {
   State state_{};
 
