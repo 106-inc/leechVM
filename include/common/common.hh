@@ -111,8 +111,9 @@ public:
         callback_it != opcToCallback.end())
       callback = callback_it->second;
     else
-      throw std::runtime_error{"Unknown inst opcode: " +
-                               std::to_string(toUnderlying(opcode_))};
+      throw std::runtime_error{
+          "Unknown inst opcode: " +
+          std::to_string(static_cast<unsigned>(toUnderlying(opcode_)))};
   }
 
   explicit Instruction(std::underlying_type_t<Opcodes> opcode, ArgType arg = 0)
