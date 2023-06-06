@@ -15,7 +15,7 @@ int main(int argc, char **argv) try {
   fs::path binaryOutput{};
   bool fromBinary = false;
   app.add_option("input", input, "input file")->required();
-  app.add_flag("--dump", binaryOutput, "leech -> dinary dump");
+  app.add_option("--dump", binaryOutput, "leech -> dinary dump");
   app.add_flag("--bin", fromBinary, "execute from binary");
 
   try {
