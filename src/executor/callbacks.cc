@@ -395,7 +395,39 @@ void execute_LOAD_ATTR([[maybe_unused]] const Instruction &inst,
   pClassObj ->print();
   std::cout << std::endl;
   #endif
+}
 
+void execute_STORE_BUILD_CLASS([[maybe_unused]] const Instruction &inst,
+                       [[maybe_unused]] State &state) {
+  auto &curFrame = state.getCurFrame();
+  auto name = curFrame.getName(inst.getArg());
+  auto classObj = curFrame.popGetTos();
+  if (typeid(*classObj) != typeid(ClassObj))
+    throw std::runtime_error("Store Build Class: trying to call from invalid leechObj");
+  auto pClassObj = std::static_pointer_cast<ClassObj>(classObj);
+  curFrame.setVar(name, pClassObj);
+  #if DEBUG_PRINT
+  std::cout << std::endl;
+  std::cout << "PC = " << state.pc << " StoreBuildClass: " << name << " = ";
+  pClassObj ->print();
+  std::cout << std::endl;
+  #endif
+}
+
+void execute_INSTANCE_CLASS([[maybe_unused]] const Instruction &inst,
+                              [[maybe_unused]] State &state) {
+  auto &curFrame = state.getCurFrame();
+  auto name = curFrame.getName(inst.getArg());
+  auto templateClass = curFrame.getVar(name);
+  if (typeid(*templateClass) != typeid(ClassObj))
+    throw std::runtime_error("Instance Class: trying to call from invalid leechObj");
+  auto pClassObj = std::static_pointer_cast<ClassObj>(templateClass);
+  curFrame.push(pClassObj->clone());
+  #if DEBUG_PRINT
+  std::cout << std::endl;
+  std::cout << "PC = " << state.pc << " InstanceClass: " << name;
+  std::cout << std::endl;
+  #endif
 }
 
 void execute_COMPARE_OP(const Instruction &inst, State &state) {

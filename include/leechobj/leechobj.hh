@@ -188,6 +188,12 @@ class ClassObj final : public LeechObj {
 public:
   explicit ClassObj() : LeechObj(sizeof(ClassObj), ValueType::Class) {}
 
+  ClassObj(ClassObj &&) = default;
+  ClassObj(const ClassObj &) = default;
+  ClassObj &operator=(ClassObj &) = default;
+  ClassObj &operator=(ClassObj &&) = default;
+  ~ClassObj() = default;
+
   void print() const override {
     std::cout << "Class dump:" << std::endl;
     for (auto &&[key, value] : fields) {
@@ -212,9 +218,9 @@ public:
 
   void serializeVal([[maybe_unused]] std::ostream &ost) const override {}
 
-  pLeechObj clone() const override { return std::make_unique<ClassObj>(); }
+  pLeechObj clone() const override { return std::make_shared<ClassObj>(*this); }
 
-  // TODO : clone, deserialize
+  // TODO :  deserialize
 };
 
 using Tuple = std::vector<pLeechObj>;
