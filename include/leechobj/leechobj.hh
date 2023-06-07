@@ -201,6 +201,15 @@ public:
     fields.insert_or_assign(std::string(name), obj);
   }
 
+  pLeechObj getField(std::string_view name) const {
+    auto It = fields.find(std::string(name));
+    if (It == fields.end()) {
+      auto msg = std::string("Invalid field name: ") += std::string(name);
+      throw std::runtime_error(msg);
+    } else
+      return It->second;
+  }
+
   void serializeVal([[maybe_unused]] std::ostream &ost) const override {}
 
   pLeechObj clone() const override { return std::make_unique<ClassObj>(); }

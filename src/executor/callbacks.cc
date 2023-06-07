@@ -219,8 +219,11 @@ void execute_LOAD_BUILD_CLASS([[maybe_unused]] const Instruction &inst,
   auto &curFrame = state.getCurFrame();
   curFrame.push(std::make_shared<ClassObj>());
   //DEBUG
+  std::cout << std::endl;
   std::cout << "Class Builder" << std::endl;
   std::cout << "Stack Size: " << curFrame.stackSize() << std::endl;
+  std::cout << std::endl;
+  //ENDEBUG
 }
 
 void execute_YIELD_FROM([[maybe_unused]] const Instruction &inst,
@@ -325,10 +328,14 @@ void execute_STORE_ATTR([[maybe_unused]] const Instruction &inst,
     throw std::runtime_error("Store attr: trying to call from invalid leechObj");
   auto pClassObj = std::static_pointer_cast<ClassObj>(classObj);
   pClassObj->updateField(name, attr);
+  //DEBUG
+  std::cout << std::endl;
   std::cout << "PC = " << state.pc << " Stored attr: " << name << " = ";
   attr->print();
   std::cout << std::endl;
   pClassObj ->print();
+  std::cout << std::endl;
+  //ENDEBUG
 }
 void execute_DELETE_ATTR([[maybe_unused]] const Instruction &inst,
                          [[maybe_unused]] State &state) {
@@ -372,8 +379,25 @@ void execute_BUILD_MAP([[maybe_unused]] const Instruction &inst,
 }
 void execute_LOAD_ATTR([[maybe_unused]] const Instruction &inst,
                        [[maybe_unused]] State &state) {
-  throw std::logic_error{"Function is not implemented yet"};
+  auto &curFrame = state.getCurFrame();
+  auto name = curFrame.getName(inst.getArg());
+  auto classObj = curFrame.top();
+  if (typeid(*classObj) != typeid(ClassObj))
+    throw std::runtime_error("Load attr: trying to call from invalid leechObj");
+  auto pClassObj = std::static_pointer_cast<ClassObj>(classObj);
+  auto attr = pClassObj->getField(name);
+  curFrame.push(attr);
+  //DEBUG
+  std::cout << std::endl;
+  std::cout << "PC = " << state.pc << " Loaded attr: " << name << " = ";
+  attr->print();
+  std::cout << std::endl;
+  pClassObj ->print();
+  std::cout << std::endl;
+  //ENDEBUG
+
 }
+
 void execute_COMPARE_OP(const Instruction &inst, State &state) {
   auto &curFrame = state.getCurFrame();
   auto op = static_cast<CmpOp>(inst.getArg());
