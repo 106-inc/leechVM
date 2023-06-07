@@ -214,7 +214,6 @@ void execute_PRINT_EXPR([[maybe_unused]] const Instruction &inst,
                         [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
 }
-
 void execute_YIELD_FROM([[maybe_unused]] const Instruction &inst,
                         [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
@@ -347,7 +346,6 @@ void execute_BUILD_MAP([[maybe_unused]] const Instruction &inst,
                        [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
 }
-
 void execute_COMPARE_OP(const Instruction &inst, State &state) {
   auto &curFrame = state.getCurFrame();
   auto op = static_cast<CmpOp>(inst.getArg());
