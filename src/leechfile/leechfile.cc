@@ -47,7 +47,7 @@ std::pair<std::string, FuncMeta> FuncMeta::deserialize(std::istream &ist) {
   auto nameLen = deserializeNum<uint64_t>(ist);
   auto name = deserializeString(ist, nameLen);
 
-  auto addr = deserializeNum<uint64_t>(ist);
+  auto addr = deserializeNum<FuncAddr>(ist);
   auto argNum = deserializeNum<uint64_t>(ist);
 
   auto cstNum = deserializeNum<uint64_t>(ist);
