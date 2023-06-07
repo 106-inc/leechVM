@@ -36,7 +36,7 @@
 .func main 0
     .cpool
         0: 0
-        1: 29
+        1: 10
     .names
         0: fib
     .code

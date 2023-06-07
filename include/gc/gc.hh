@@ -45,8 +45,10 @@ public:
     if (newOffset > Size)
       throw std::runtime_error{"Out of memory"};
 
-    return static_cast<void *>(reinterpret_cast<char *>(getStartPtr()) +
-                               std::exchange(curOffset, newOffset));
+    auto *start = getStartPtr();
+    auto *to_ret = static_cast<void *>(reinterpret_cast<char *>(start) +
+                                       std::exchange(curOffset, newOffset));
+    return to_ret;
   }
 
   template <class T>
@@ -59,7 +61,7 @@ class MemoryManager final {
   static inline constexpr std::size_t kBlockSizeMB = 32;
   static inline constexpr std::size_t kBlockSize = kBlockSizeMB << 20U;
   static inline constexpr std::uintptr_t kStartAddr = 0xE000000;
-  static inline constexpr std::size_t kInternalsSize = kStartAddr / 2;
+  static inline constexpr std::size_t kInternalsSize = kBlockSize / 2;
 
   class MMapWrapper final {
     std::size_t size_{};

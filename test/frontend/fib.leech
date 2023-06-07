@@ -55,7 +55,7 @@
 .func main 0
     .cpool
         0: 0
-        1: 1000
+        1: 10
     .names
         0: fib
     .code

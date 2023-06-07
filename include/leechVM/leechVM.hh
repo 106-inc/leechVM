@@ -3,6 +3,7 @@
 
 #include "executor/executor.hh"
 #include "frontend/frontend.hh"
+#include "gc/gc.hh"
 
 namespace leech {
 
@@ -20,6 +21,7 @@ public:
 
 private:
   LeechFile leechFile_;
+  gc::MemoryManager memes_;
 };
 
 } // namespace leech

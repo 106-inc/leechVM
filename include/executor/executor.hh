@@ -2,6 +2,7 @@
 #define __INCLUDE_EXECUTOR_EXECUTOR_HH__
 
 #include <functional>
+#include <leechobj/leechobj.hh>
 #include <optional>
 #include <stack>
 #include <string_view>
@@ -28,7 +29,7 @@ public:
   StackFrame &operator=(StackFrame &&) = default;
 
   template <class T, typename... Args> void emplace(Args &&... args) {
-    dataStack_.emplace(new T(std::forward<Args>(args)...));
+    dataStack_.emplace(buildInstance<T>(args...));
   }
 
   [[nodiscard]] auto getRet() const { return retAddr_; }

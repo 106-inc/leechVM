@@ -37,7 +37,7 @@ allocateLeechObj() {
 }
 
 template <typename T, typename... Args> auto buildInstance(Args &&... args) {
-  auto obj = allocateLeechObj<T>();
+  auto *obj = allocateLeechObj<T>();
   return new (obj) T(std::forward<Args>(args)...);
 }
 

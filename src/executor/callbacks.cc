@@ -76,7 +76,7 @@ void execute_BINARY_ADD([[maybe_unused]] const Instruction &inst,
   auto tos1 = curFrame.popGetTos();
   auto tos2 = curFrame.popGetTos();
 
-  curFrame.push(tos1->add(tos2.get()));
+  curFrame.push(tos1->add(tos2));
 }
 void execute_BINARY_SUBTRACT([[maybe_unused]] const Instruction &inst,
                              State &state) {
@@ -84,7 +84,7 @@ void execute_BINARY_SUBTRACT([[maybe_unused]] const Instruction &inst,
   auto tos1 = curFrame.popGetTos();
   auto tos2 = curFrame.popGetTos();
 
-  curFrame.push(tos2->sub(tos1.get()));
+  curFrame.push(tos2->sub(tos1));
 }
 void execute_BINARY_SUBSCR([[maybe_unused]] const Instruction &inst,
                            State &state) {
@@ -92,7 +92,7 @@ void execute_BINARY_SUBSCR([[maybe_unused]] const Instruction &inst,
   auto idx = curFrame.popGetTos();
   auto tuple = curFrame.popGetTos();
 
-  curFrame.push(tuple->subscript(idx.get()));
+  curFrame.push(tuple->subscript(idx));
 }
 void execute_BINARY_FLOOR_DIVIDE([[maybe_unused]] const Instruction &inst,
                                  [[maybe_unused]] State &state) {
@@ -104,7 +104,7 @@ void execute_BINARY_TRUE_DIVIDE([[maybe_unused]] const Instruction &inst,
   auto two = curFrame.popGetTos();
   auto one = curFrame.popGetTos();
 
-  curFrame.push(one->div(two.get()));
+  curFrame.push(one->div(two));
 }
 void execute_INPLACE_FLOOR_DIVIDE([[maybe_unused]] const Instruction &inst,
                                   [[maybe_unused]] State &state) {
@@ -353,7 +353,7 @@ void execute_COMPARE_OP(const Instruction &inst, State &state) {
   auto tos1 = curFrame.popGetTos();
   auto tos2 = curFrame.popGetTos();
 
-  bool res = tos2->compare(tos1.get(), op);
+  bool res = tos2->compare(tos1, op);
 
   curFrame.emplace<IntObj>(static_cast<Integer>(res));
 }
