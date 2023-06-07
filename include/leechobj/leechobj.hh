@@ -5,18 +5,41 @@
 #include <istream>
 #include <map>
 #include <memory>
+#include <new>
 #include <ostream>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "common/common.hh"
 #include "common/opcodes.hh"
+#include "gc/gc.hh"
 
 namespace leech {
 
 class LeechObj;
-using pLeechObj = std::shared_ptr<LeechObj>;
+using pLeechObj = LeechObj *;
+
+template <typename T>
+[[nodiscard(
+    "Leech object is allocated, but not used. It's really a pitty. Please, "
+    "consider assigning the result of this really important memory allocating "
+    "function which uses mmap() Unix function inside, to some variable in "
+    "order to not forget using this pointer in near future. Thank you for "
+    "understanding from leechVM developers: Andrey Derzhavin, Kirill Ivakin, "
+    "Farid Khaidari, Vasilii Zaitsev - young and ambitious MIPT students & "
+    "Base Chair for encouraging us to "
+    "implement this wonderful study project!")]] auto
+allocateLeechObj() {
+  return static_cast<pLeechObj>(
+      gc::MemoryManager::StackRegion::allocatePrimitive<T>());
+}
+
+template <typename T, typename... Args> auto buildInstance(Args &&... args) {
+  auto obj = allocateLeechObj<T>();
+  return new (obj) T(std::forward<Args>(args)...);
+}
 
 class LeechObj : public ISerializable {
   std::size_t size_{};
@@ -62,7 +85,7 @@ public:
 
   void print() const override { std::cout << "None" << std::endl; }
 
-  pLeechObj clone() const override { return std::make_unique<NoneObj>(); }
+  pLeechObj clone() const override { return buildInstance<NoneObj>(); }
 
 private:
   void serializeVal(std::ostream &) const override {}
@@ -81,12 +104,10 @@ public:
   static pLeechObj deserialize(std::istream &ist) {
     deserializeNum<uint64_t>(ist);
     auto val = deserializeNum<T>(ist);
-    return std::make_unique<NumberObj>(val);
+    return buildInstance<NumberObj>(val);
   }
 
-  pLeechObj clone() const override {
-    return std::make_unique<NumberObj>(value_);
-  }
+  pLeechObj clone() const override { return buildInstance<NumberObj>(value_); }
 
   pLeechObj div(LeechObj *obj) const override {
     if (obj->getType() != getType())
@@ -95,8 +116,8 @@ public:
     auto *pObj = dynamic_cast<NumberObj<T> *>(obj);
     if (pObj == nullptr)
       throw std::runtime_error("Dynamic cast failed");
-    return std::make_shared<NumberObj<Float>>(static_cast<Float>(value_) /
-                                              static_cast<Float>(pObj->value_));
+    return buildInstance<NumberObj<Float>>(static_cast<Float>(value_) /
+                                           static_cast<Float>(pObj->value_));
   }
 
   bool compare(LeechObj *obj, CmpOp op) const override {
@@ -131,14 +152,14 @@ public:
     auto pobj = dynamic_cast<NumberObj *>(obj);
     if (nullptr == pobj)
       throw std::runtime_error("Dynamic cast failed");
-    return std::make_unique<NumberObj>(value_ - pobj->value_);
+    return buildInstance<NumberObj>(value_ - pobj->value_);
   }
 
   pLeechObj add(LeechObj *obj) const override {
     auto pobj = dynamic_cast<NumberObj *>(obj);
     if (nullptr == pobj)
       throw std::runtime_error("Dynamic cast failed");
-    return std::make_unique<NumberObj>(pobj->value_ + value_);
+    return buildInstance<NumberObj>(pobj->value_ + value_);
   }
 
   auto getVal() const { return value_; }
@@ -161,14 +182,12 @@ public:
 
   void print() const override { std::cout << '"' << string_ << '"'; }
 
-  pLeechObj clone() const override {
-    return std::make_unique<StringObj>(string_);
-  }
+  pLeechObj clone() const override { return buildInstance<StringObj>(string_); }
 
   static pLeechObj deserialize(std::istream &ist) {
     auto strlen = deserializeNum<uint64_t>(ist);
     auto str = deserializeString(ist, strlen);
-    return std::make_unique<StringObj>(str);
+    return buildInstance<StringObj>(str);
   }
 
 private:
@@ -268,7 +287,7 @@ public:
     for (auto &&elem : tuple_)
       res.push_back(elem->clone());
 
-    return std::make_unique<TupleObj>(std::move(res));
+    return buildInstance<TupleObj>(std::move(res));
   }
 
   static pLeechObj deserialize(std::istream &ist) {
@@ -277,7 +296,7 @@ public:
     for (uint64_t i = 0; i < len; ++i)
       tuple.push_back(deserializeObj(ist));
 
-    return std::make_unique<TupleObj>(std::move(tuple));
+    return buildInstance<TupleObj>(std::move(tuple));
   }
 
 private:
@@ -304,6 +323,8 @@ inline pLeechObj deserializeObj(std::istream &ist) {
     return nullptr;
   }
 }
+
+// void trigger_warning() { allocateLeechObj<IntObj>(); }
 
 } // namespace leech
 

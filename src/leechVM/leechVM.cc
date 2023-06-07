@@ -3,13 +3,13 @@
 namespace leech {
 
 void LeechVM::run() {
-  Executor exec(leechFile_.get());
+  Executor exec(&leechFile_);
   exec.execute();
 }
 
 void LeechVM::generateLeechFile(std::istream &in, bool isFromBinary) {
   if (isFromBinary) {
-    leechFile_ = std::make_shared<LeechFile>(LeechFile::deserialize(in));
+    leechFile_ = LeechFile::deserialize(in);
   } else {
     std::stringstream out;
     yy::Driver driver{in, out};
@@ -20,5 +20,5 @@ void LeechVM::generateLeechFile(std::istream &in, bool isFromBinary) {
   }
 }
 
-void LeechVM::dumpBinary(std::ostream &out) { leechFile_->serialize(out); }
+void LeechVM::dumpBinary(std::ostream &out) { leechFile_.serialize(out); }
 } // namespace leech

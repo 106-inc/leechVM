@@ -1,4 +1,5 @@
 #include "leechobj/leechobj.hh"
+#include <gc/gc.hh>
 
 namespace leech {
 bool LeechObj::compare(LeechObj *obj, CmpOp) const {

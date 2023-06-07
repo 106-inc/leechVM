@@ -19,7 +19,7 @@ public:
   void run();
 
 private:
-  std::shared_ptr<LeechFile> leechFile_ = nullptr;
+  LeechFile leechFile_;
 };
 
 } // namespace leech

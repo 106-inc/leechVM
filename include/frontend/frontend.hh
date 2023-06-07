@@ -28,8 +28,7 @@ private:
   static inline constexpr size_t numTokens = 10;
 
   std::unique_ptr<Lexer> lexer_{};
-  std::shared_ptr<leech::LeechFile> leechFile_{
-      std::make_shared<leech::LeechFile>()};
+  leech::LeechFile leechFile_{};
   std::unordered_map<std::string, leech::FuncAddr> labels_{};
   std::unordered_map<std::string, leech::FuncAddr> forwardBranches_{};
   leech::Tuple tupleArgs_{};

@@ -2,6 +2,7 @@
 #define __INCLUDE_GC_GC_HH__
 
 #include <cstdint>
+#include <iterator>
 #include <stdexcept>
 #include <sys/mman.h>
 #include <type_traits>
@@ -18,7 +19,7 @@ template <std::uintptr_t StartAddr, std::size_t Size> class Region final {
     template <class U> Allocator([[maybe_unused]] const Allocator<U> &other) {}
 
     [[nodiscard]] auto allocate(std::size_t size) {
-      return Region::allocateInstance<T>(size);
+      return Region::allocatePrimitive<T>(size);
     }
 
     void deallocate([[maybe_unused]] T *ptr,
@@ -44,11 +45,12 @@ public:
     if (newOffset > Size)
       throw std::runtime_error{"Out of memory"};
 
-    return getStartPtr() + std::exchange(curOffset, newOffset);
+    return static_cast<void *>(reinterpret_cast<char *>(getStartPtr()) +
+                               std::exchange(curOffset, newOffset));
   }
 
   template <class T>
-  [[nodiscard]] static auto allocateInstance(std::size_t num_elems = 1) {
+  [[nodiscard]] static auto allocatePrimitive(std::size_t num_elems = 1) {
     return reinterpret_cast<T *>(allocateRaw(num_elems * sizeof(T)));
   }
 };
@@ -57,6 +59,7 @@ class MemoryManager final {
   static inline constexpr std::size_t kBlockSizeMB = 32;
   static inline constexpr std::size_t kBlockSize = kBlockSizeMB << 20U;
   static inline constexpr std::uintptr_t kStartAddr = 0xE000000;
+  static inline constexpr std::size_t kInternalsSize = kStartAddr / 2;
 
   class MMapWrapper final {
     std::size_t size_{};
@@ -97,6 +100,9 @@ public:
     if (block_.as<decltype(kStartAddr)>() != kStartAddr)
       throw std::logic_error{"Trying to create more than one mem block"};
   }
+
+  using InternalRegion = Region<kStartAddr, kInternalsSize>;
+  using StackRegion = Region<kStartAddr + kInternalsSize, kBlockSize>;
 
 private:
 };

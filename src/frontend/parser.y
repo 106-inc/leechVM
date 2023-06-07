@@ -57,8 +57,8 @@ func:               funcHeader
 
 funcHeader:         FUNC_DECL IDENTIFIER INTEGER              {
                                                                 driver->currentFunc_ = $2;
-                                                                driver->leechFile_->meta.funcs[$2].addr = driver->globalInstrCount_;
-                                                                driver->leechFile_->meta.funcs[$2].argNum = $3;
+                                                                driver->leechFile_.meta.funcs[$2].addr = driver->globalInstrCount_;
+                                                                driver->leechFile_.meta.funcs[$2].argNum = $3;
                                                                 driver->instrCount_ = 0;
                                                                 driver->labels_.clear();
                                                                 driver->forwardBranches_.clear();
@@ -72,18 +72,18 @@ constants:          constants leechObjEntry                   {};
 
 leechObjEntry:      INTEGER COLON leechObj                    {
                                                                 auto&& currentFunc = driver->currentFunc_;
-                                                                driver->leechFile_->meta.funcs[currentFunc].cstPool.emplace_back($3);
+                                                                driver->leechFile_.meta.funcs[currentFunc].cstPool.emplace_back($3);
                                                               };
 
 leechObj:           primitiveTy                               { $$ = $1; };
                   | tupple                                    { $$ = $1; };
 
-primitiveTy:        IDENTIFIER                                { $$ = std::make_shared<leech::StringObj>($1); };
-                  | INTEGER                                   { $$ = std::make_shared<leech::NumberObj<std::int64_t>>($1); };
+primitiveTy:        IDENTIFIER                                { $$ = leech::buildInstance<leech::StringObj>($1); };
+                  | INTEGER                                   { $$ = leech::buildInstance<leech::NumberObj<std::int64_t>>($1); };
 
 tupple:             LRB tuppleArgs RRB                        {
                                                                 auto&& args = driver->tupleArgs_;
-                                                                $$ = std::make_shared<leech::TupleObj>(args.begin(), args.end());
+                                                                $$ = leech::buildInstance<leech::TupleObj>(args.begin(), args.end());
                                                                 args.clear();
                                                               };
 tuppleArgs:         tuppleArgs COMMA primitiveTy              { driver->tupleArgs_.emplace_back($3); };
@@ -94,11 +94,11 @@ namesBlock:         NAMES_DECL names                          {};
 
 names:              names nameEntry                           {
                                                                 auto&& currentFunc = driver->currentFunc_;
-                                                                driver->leechFile_->meta.funcs[currentFunc].names.emplace_back($2);
+                                                                driver->leechFile_.meta.funcs[currentFunc].names.emplace_back($2);
                                                               };
                   | nameEntry                                 {
                                                                 auto&& currentFunc = driver->currentFunc_;
-                                                                driver->leechFile_->meta.funcs[currentFunc].names.emplace_back($1);
+                                                                driver->leechFile_.meta.funcs[currentFunc].names.emplace_back($1);
                                                               };
 
 nameEntry:          INTEGER COLON IDENTIFIER                  { $$ = $3; };
@@ -112,12 +112,12 @@ code:               code codeEntry                            {};
 codeEntry:          LABEL IDENTIFIER                          {
                                                                 auto&& it = driver->forwardBranches_.find($2);
                                                                 if (it != driver->forwardBranches_.end()) {
-                                                                  driver->leechFile_->code[it->second].setArg(driver->instrCount_);
+                                                                  driver->leechFile_.code[it->second].setArg(driver->instrCount_);
                                                                 }
                                                                 driver->labels_[$2] = driver->instrCount_;
                                                               };
                   | instruction                               {
-                                                                driver->leechFile_->code.push_back($1);
+                                                                driver->leechFile_.code.push_back($1);
                                                                 ++driver->instrCount_;
                                                                 ++driver->globalInstrCount_;
                                                               };

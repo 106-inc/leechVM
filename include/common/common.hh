@@ -5,7 +5,9 @@
 #include <stdexcept>
 #include <string>
 #include <type_traits>
+#include <vector>
 
+#include "gc/gc.hh"
 #include "opcodes.hh"
 
 namespace leech {
@@ -50,6 +52,15 @@ template <typename T> inline constexpr ValueType typeToValueType() {
     return ValueType::Integer;
   return ValueType::Float;
 }
+
+template <typename T>
+using LeechVector =
+    std::vector<T, decltype(gc::MemoryManager::StackRegion::getAllocator<T>())>;
+
+template <typename T>
+using InternVector =
+    std::vector<T,
+                decltype(gc::MemoryManager::InternalRegion::getAllocator<T>())>;
 
 template <typename T> void serializeNum(std::ostream &ost, T val) {
   static_assert(Number_v<T>);
