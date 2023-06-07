@@ -577,7 +577,7 @@ void printDebugInfo(
   [[maybe_unused]] std::string_view name,
   [[maybe_unused]] const State & state,
   [[maybe_unused]] std::shared_ptr<ClassObj> pClassObj) {
-  #if DEBUG_PRINT
+  #ifdef DEBUG_PRINT
   std::cout << std::endl;
   std::cout << "PC = " <<  state.pc << std::endl << op << " " << name << " = ";
   pClassObj ->print();
