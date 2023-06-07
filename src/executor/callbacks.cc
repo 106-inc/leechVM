@@ -214,14 +214,6 @@ void execute_PRINT_EXPR([[maybe_unused]] const Instruction &inst,
                         [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
 }
-void execute_LOAD_BUILD_CLASS([[maybe_unused]] const Instruction &inst,
-                              [[maybe_unused]] State &state) {
-  auto &curFrame = state.getCurFrame();
-  curFrame.push(std::make_shared<ClassObj>());
-  //DEBUG
-  std::cout << "Class Builder" << std::endl;
-  std::cout << "Stack Size: " << curFrame.stackSize() << std::endl;
-}
 
 void execute_YIELD_FROM([[maybe_unused]] const Instruction &inst,
                         [[maybe_unused]] State &state) {
@@ -315,7 +307,6 @@ void execute_UNPACK_EX([[maybe_unused]] const Instruction &inst,
                        [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
 }
-
 void execute_DELETE_ATTR([[maybe_unused]] const Instruction &inst,
                          [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
@@ -356,6 +347,7 @@ void execute_BUILD_MAP([[maybe_unused]] const Instruction &inst,
                        [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
 }
+
 void execute_COMPARE_OP(const Instruction &inst, State &state) {
   auto &curFrame = state.getCurFrame();
   auto op = static_cast<CmpOp>(inst.getArg());
