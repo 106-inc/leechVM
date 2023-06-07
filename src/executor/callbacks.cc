@@ -216,11 +216,13 @@ void execute_PRINT_EXPR([[maybe_unused]] const Instruction &inst,
 }
 void execute_LOAD_BUILD_CLASS([[maybe_unused]] const Instruction &inst,
                               [[maybe_unused]] State &state) {
-  std::cout << "Class Builder" << std::endl;
   auto &curFrame = state.getCurFrame();
-  curFrame.push(curFrame.getConst(0));
-  //throw std::logic_error{"Function is not implemented yet"};
+  curFrame.push(std::make_shared<ClassObj>());
+  //DEBUG
+  std::cout << "Class Builder" << std::endl;
+  std::cout << "Stack Size: " << curFrame.stackSize() << std::endl;
 }
+
 void execute_YIELD_FROM([[maybe_unused]] const Instruction &inst,
                         [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
@@ -315,7 +317,18 @@ void execute_UNPACK_EX([[maybe_unused]] const Instruction &inst,
 }
 void execute_STORE_ATTR([[maybe_unused]] const Instruction &inst,
                         [[maybe_unused]] State &state) {
-  throw std::logic_error{"Function is not implemented yet"};
+  auto &curFrame = state.getCurFrame();
+  auto name = curFrame.getName(inst.getArg());
+  auto attr = curFrame.popGetTos();
+  auto classObj = curFrame.top();
+  if (typeid(*classObj) != typeid(ClassObj))
+    throw std::runtime_error("Store attr: trying to call from invalid leechObj");
+  auto pClassObj = std::static_pointer_cast<ClassObj>(classObj);
+  pClassObj->updateField(name, attr);
+  std::cout << "PC = " << state.pc << " Stored attr: " << name << " = ";
+  attr->print();
+  std::cout << std::endl;
+  pClassObj ->print();
 }
 void execute_DELETE_ATTR([[maybe_unused]] const Instruction &inst,
                          [[maybe_unused]] State &state) {

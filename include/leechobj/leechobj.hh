@@ -191,11 +191,20 @@ public:
   void print() const override {
     std::cout << "Class dump:" << std::endl;
     for (auto &&[key, value] : fields) {
-      std::cout << "key:" << key;
+      std::cout << "key: " << key << " = ";
       value->print();
       std::cout << std::endl;
     }
   }
+
+  void updateField(std::string_view name, pLeechObj obj) {
+    fields.insert_or_assign(std::string(name), obj);
+  }
+
+  void serializeVal([[maybe_unused]] std::ostream &ost) const override {}
+
+  pLeechObj clone() const override { return std::make_unique<ClassObj>(); }
+
   // TODO : clone, deserialize
 };
 
