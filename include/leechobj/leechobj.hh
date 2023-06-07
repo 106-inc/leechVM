@@ -227,9 +227,9 @@ public:
   // TODO :  deserialize
   void serializeVal([[maybe_unused]] std::ostream &ost) const override {}
 
-  pLeechObj clone() const override { return std::make_unique<ClassObj>(); }
+  pLeechObj clone() const override { return std::make_shared<ClassObj>(*this); }
 
-  // TODO : clone, deserialize
+  // TODO :  deserialize
 };
 
 using Tuple = std::vector<pLeechObj>;
