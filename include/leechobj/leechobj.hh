@@ -218,6 +218,14 @@ public:
       throw std::logic_error("Trying to register method 2nd time");
   }
 
+  void checkMethod(std::string_view name) {
+    auto It = methods.find(std::string(name));
+    if (It == methods.end()) {
+      auto msg = std::string("There is no method named ") += std::string(name);
+      throw std::logic_error(msg.c_str());
+    }
+  }
+
   pLeechObj getField(std::string_view name) const {
     auto It = fields.find(std::string(name));
     if (It == fields.end()) {
@@ -228,16 +236,12 @@ public:
   }
 
   std::size_t getNumFields() { return fields.size(); }
+  std::size_t getNumMethods() { return methods.size(); }
 
   void serializeVal([[maybe_unused]] std::ostream &ost) const override {
     throw std::runtime_error("Hey buddy, I think you've got the wrong door, "
                              "the leather club's two blocks down. ");
   }
-
-  pLeechObj clone() const override { return std::make_shared<ClassObj>(*this); }
-
-  // TODO :  deserialize
-  void serializeVal([[maybe_unused]] std::ostream &ost) const override {}
 
   pLeechObj clone() const override { return std::make_shared<ClassObj>(*this); }
 

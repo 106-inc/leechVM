@@ -671,15 +671,22 @@ void execute_CALL_METHOD([[maybe_unused]] const Instruction &inst,
 
   auto *fMeta = &state.pFile->meta.funcs.at(fName);
   state.nextPC = fMeta->addr;
+  auto numArgs = fMeta->argNum;
 
   /* Get args from data stack */
-  std::vector<pLeechObj> args(curFrame.stackSize());
+  std::vector<pLeechObj> args(numArgs);
   std::generate(args.begin(), args.end(),
                 [&curFrame] { return curFrame.popGetTos(); });
+
+  auto leechObj = curFrame.top();
+  auto pClassObj = safeConvertToClass(leechObj, "CallMethod");
+  pClassObj->checkMethod(fName);
+
 
   curFrame.setRet(state.pc + 1);
   state.funcStack.emplace(fMeta);
 
+  state.getCurFrame().push(pClassObj);
   state.getCurFrame().fillArgs(args.begin(), args.end());
 }
 
