@@ -584,14 +584,14 @@ void printDebugInfo(
   std::cout << std::endl;
   #endif
 }
-#pragma GCC diagnostic ignored "-Wundef"
+
 void printDebugInfo(
   [[maybe_unused]] std::string_view op,
   [[maybe_unused]] std::string_view name,
   [[maybe_unused]] const State & state,
   [[maybe_unused]] std::shared_ptr<ClassObj> pClassObj,
   [[maybe_unused]] std::shared_ptr<LeechObj> attr) {
-  #if DEBUG_PRINT
+  #ifdef DEBUG_PRINT
   std::cout << std::endl;
   std::cout << "PC = " <<  state.pc << std::endl << op << " " << name << " = ";
   attr->print();
