@@ -468,8 +468,7 @@ void execute_CALL_FUNCTION(const Instruction &inst, State &state) {
 
   /* Get args from data stack */
   std::vector<pLeechObj> args(curFrame.stackSize());
-  std::generate(args.begin(), args.end(),
-                [&fMeta] { return fMeta->argNum; });
+  std::fill(args.begin(), args.end() ,fMeta->argNum);
 
   curFrame.setRet(state.pc + 1);
   state.funcStack.emplace(fMeta);
