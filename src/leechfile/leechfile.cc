@@ -25,7 +25,10 @@ FuncMeta &FuncMeta::operator=(const FuncMeta &fm) {
 
 void FuncMeta::serialize(std::ostream &ost) const {
   /* Write function address */
-  serializeNum<std::uint64_t>(ost, addr);
+  serializeNum<FuncAddr>(ost, addr);
+
+  /* Write function argument num */
+  serializeNum<uint64_t>(ost, argNum);
 
   /* Write constant pool */
   auto cstNum = cstPool.size();
@@ -45,6 +48,7 @@ std::pair<std::string, FuncMeta> FuncMeta::deserialize(std::istream &ist) {
   auto name = deserializeString(ist, nameLen);
 
   auto addr = deserializeNum<uint64_t>(ist);
+  auto argNum = deserializeNum<uint64_t>(ist);
 
   auto cstNum = deserializeNum<uint64_t>(ist);
   std::vector<pLeechObj> cstPool{};
@@ -60,6 +64,7 @@ std::pair<std::string, FuncMeta> FuncMeta::deserialize(std::istream &ist) {
 
   FuncMeta fm{};
   fm.addr = addr;
+  fm.argNum = argNum;
   fm.cstPool = std::move(cstPool);
   fm.names = std::move(names);
 
