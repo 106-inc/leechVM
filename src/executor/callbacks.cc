@@ -467,7 +467,7 @@ void execute_CALL_FUNCTION(const Instruction &inst, State &state) {
   state.nextPC = fMeta->addr;
 
   /* Get args from data stack */
-  std::vector<pLeechObj> args(fMeta->names.size());
+  std::vector<pLeechObj> args(curFrame.stackSize());
   std::generate(args.begin(), args.end(),
                 [&curFrame] { return curFrame.popGetTos(); });
 
