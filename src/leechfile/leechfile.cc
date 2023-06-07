@@ -1,5 +1,6 @@
 #include <algorithm>
 
+#include "common/common.hh"
 #include "leechfile/leechfile.hh"
 
 namespace leech {
@@ -43,7 +44,7 @@ void FuncMeta::serialize(std::ostream &ost) const {
     serializeString(ost, name);
 }
 
-std::pair<std::string, FuncMeta> FuncMeta::deserialize(std::istream &ist) {
+std::pair<LeechString, FuncMeta> FuncMeta::deserialize(std::istream &ist) {
   auto nameLen = deserializeNum<uint64_t>(ist);
   auto name = deserializeString(ist, nameLen);
 
@@ -51,12 +52,12 @@ std::pair<std::string, FuncMeta> FuncMeta::deserialize(std::istream &ist) {
   auto argNum = deserializeNum<uint64_t>(ist);
 
   auto cstNum = deserializeNum<uint64_t>(ist);
-  std::vector<pLeechObj> cstPool{};
+  LeechVector<pLeechObj> cstPool{};
   for (uint64_t i = 0; i < cstNum; ++i)
     cstPool.push_back(deserializeObj(ist));
 
   auto nameNum = deserializeNum<uint64_t>(ist);
-  std::vector<std::string> names{};
+  LeechVector<LeechString> names{};
   for (uint64_t i = 0; i < nameNum; ++i) {
     auto len = deserializeNum<uint64_t>(ist);
     names.push_back(deserializeString(ist, len));
@@ -75,11 +76,9 @@ std::pair<std::string, FuncMeta> FuncMeta::deserialize(std::istream &ist) {
  * Meta definitions
  */
 
-Meta::Meta(std::unordered_map<std::string, FuncMeta> &&funcs_)
-    : funcs(funcs_) {}
+Meta::Meta(LeechMap<LeechString, FuncMeta> &&funcs_) : funcs(funcs_) {}
 
-Meta::Meta(const std::unordered_map<std::string, FuncMeta> &funcs_)
-    : funcs(funcs_) {}
+Meta::Meta(const LeechMap<LeechString, FuncMeta> &funcs_) : funcs(funcs_) {}
 
 void Meta::serialize(std::ostream &ost) const {
   /* Write function number */
@@ -95,7 +94,7 @@ void Meta::serialize(std::ostream &ost) const {
 
 Meta Meta::deserialize(std::istream &ist) {
   auto fnum = deserializeNum<uint64_t>(ist);
-  std::unordered_map<std::string, FuncMeta> funcs{};
+  LeechMap<LeechString, FuncMeta> funcs{};
   for (uint64_t i = 0; i < fnum; ++i) {
     auto &&[name, meta] = FuncMeta::deserialize(ist);
     funcs[name] = meta;

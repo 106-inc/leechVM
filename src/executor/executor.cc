@@ -1,4 +1,5 @@
 #include "executor/executor.hh"
+#include "common/common.hh"
 
 namespace leech {
 StackFrame::StackFrame(const FuncMeta *pmeta) : pmeta_(pmeta) {
@@ -20,7 +21,7 @@ State::State(LeechFile *pfile) : pFile(pfile) {
   if (nullptr == pFile)
     throw std::invalid_argument("Trying to execute null leech file");
   auto &meta = pFile->meta;
-  auto *mainFrame = &meta.funcs.at(std::string(kMainFuncName));
+  auto *mainFrame = &meta.funcs.at(LeechString(kMainFuncName));
   pc = mainFrame->addr;
   funcStack.emplace(mainFrame);
 }

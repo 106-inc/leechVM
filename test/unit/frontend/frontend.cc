@@ -1,4 +1,5 @@
 #include <fstream>
+#include <gc/gc.hh>
 
 #include "test_header.hh"
 
@@ -6,6 +7,8 @@
 #include "frontend/frontend.hh"
 
 #define PATH(test) TESTS_DIR test
+
+leech::gc::MemoryManager memes;
 
 TEST(frontend, fibLexicalErr) {
   std::ifstream file(PATH("fib.leech"));

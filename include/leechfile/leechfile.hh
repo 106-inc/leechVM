@@ -17,8 +17,8 @@ namespace leech {
 struct FuncMeta final : public ISerializable {
   FuncAddr addr{};
   uint64_t argNum{};
-  std::vector<pLeechObj> cstPool{};
-  std::vector<std::string> names{};
+  LeechVector<pLeechObj> cstPool{};
+  LeechVector<LeechString> names{};
 
   FuncMeta() = default;
 
@@ -31,15 +31,15 @@ struct FuncMeta final : public ISerializable {
   ~FuncMeta() = default;
 
   void serialize(std::ostream &ost) const override;
-  static std::pair<std::string, FuncMeta> deserialize(std::istream &ist);
+  static std::pair<LeechString, FuncMeta> deserialize(std::istream &ist);
 };
 
 struct Meta final : public ISerializable {
-  std::unordered_map<std::string, FuncMeta> funcs{};
+  LeechMap<LeechString, FuncMeta> funcs{};
 
   Meta() = default;
-  Meta(std::unordered_map<std::string, FuncMeta> &&funcs_);
-  Meta(const std::unordered_map<std::string, FuncMeta> &funcs_);
+  Meta(LeechMap<LeechString, FuncMeta> &&funcs_);
+  Meta(const LeechMap<LeechString, FuncMeta> &funcs_);
 
   void serialize(std::ostream &ost) const override;
   static Meta deserialize(std::istream &ist);

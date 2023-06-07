@@ -41,7 +41,8 @@ int main(int argc, char **argv) try {
     std::cout << "Time: " << static_cast<double>(time) * 1e-3 << " ms"
               << std::endl;
   }
+  return LEECH_EXIT_SUCCUESS;
 } catch (const std::exception &e) {
   std::cerr << e.what() << std::endl;
-  return 1;
+  return LEECH_EXIT_FAILURE;
 }

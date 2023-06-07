@@ -11,14 +11,19 @@
 namespace leech::gc {
 
 template <std::uintptr_t StartAddr, std::size_t Size> class Region final {
-  template <class T> struct Allocator final {
+  template <class T> struct Allocator {
     using value_type = T;
 
     Allocator() = default;
 
     template <class U> Allocator([[maybe_unused]] const Allocator<U> &other) {}
 
-    [[nodiscard]] auto allocate(std::size_t size) {
+    template <class U>
+    bool operator==([[maybe_unused]] const Allocator<U> &other) const {
+      return true;
+    }
+
+    [[nodiscard]] auto *allocate(std::size_t size) {
       return Region::allocatePrimitive<T>(size);
     }
 
@@ -39,7 +44,7 @@ public:
 
   static void reset() { curOffset = 0; }
 
-  [[nodiscard]] static auto allocateRaw(std::size_t num_of_bytes) {
+  [[nodiscard]] static auto *allocateRaw(std::size_t num_of_bytes) {
     auto newOffset = curOffset + num_of_bytes;
 
     if (newOffset > Size)
@@ -52,7 +57,7 @@ public:
   }
 
   template <class T>
-  [[nodiscard]] static auto allocatePrimitive(std::size_t num_elems = 1) {
+  [[nodiscard]] static auto *allocatePrimitive(std::size_t num_elems = 1) {
     return reinterpret_cast<T *>(allocateRaw(num_elems * sizeof(T)));
   }
 };

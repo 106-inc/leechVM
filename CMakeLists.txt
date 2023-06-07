@@ -37,7 +37,7 @@ include(cmake/clang_format.cmake)
 # indicate the docs build
 option(BUILD_DOC "Build docs" OFF)
 # indicate the tests build
-option(BUILD_TESTS "Build tests" OFF)
+option(BUILD_TESTS "Build tests" ON)
 # add -Werror option
 option(ENABLE_WERROR "Enable -Werror option (CI)" OFF)
 

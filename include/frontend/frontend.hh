@@ -29,10 +29,10 @@ private:
 
   std::unique_ptr<Lexer> lexer_{};
   leech::LeechFile leechFile_{};
-  std::unordered_map<std::string, leech::FuncAddr> labels_{};
-  std::unordered_map<std::string, leech::FuncAddr> forwardBranches_{};
+  std::unordered_map<leech::LeechString, leech::FuncAddr> labels_{};
+  std::unordered_map<leech::LeechString, leech::FuncAddr> forwardBranches_{};
   leech::Tuple tupleArgs_{};
-  std::string currentFunc_{};
+  leech::LeechString currentFunc_{};
   std::size_t instrCount_ = 0;
   std::size_t globalInstrCount_ = 0;
 };

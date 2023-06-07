@@ -1,14 +1,21 @@
 #ifndef __INCLUDE_COMMON_COMMON_HH__
 #define __INCLUDE_COMMON_COMMON_HH__
 
+#include <functional>
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <type_traits>
+#include <unordered_set>
+#include <utility>
 #include <vector>
 
 #include "gc/gc.hh"
 #include "opcodes.hh"
+
+#define LEECH_EXIT_SUCCUESS 0
+#define LEECH_EXIT_FAILURE -1
 
 namespace leech {
 
@@ -67,6 +74,14 @@ template <typename T> void serializeNum(std::ostream &ost, T val) {
   ost.write(reinterpret_cast<char *>(&val), sizeof(val));
 }
 
+template <typename K, typename V>
+using LeechMap =
+    std::unordered_map<K, V, std::hash<K>, std::equal_to<K>,
+                       decltype(gc::MemoryManager::InternalRegion::getAllocator<
+                                std::pair<const K, V>>())>;
+
+using LeechString = std::string;
+
 inline void serializeString(std::ostream &ost, std::string_view sv) {
   auto svLen = sv.size();
   serializeNum(ost, svLen);
@@ -83,8 +98,8 @@ template <typename T> T deserializeNum(std::istream &ist) {
   return num;
 }
 
-inline std::string deserializeString(std::istream &ist, std::size_t size) {
-  std::string res{};
+inline auto deserializeString(std::istream &ist, std::size_t size) {
+  LeechString res{};
   res.resize(size);
   if (!ist.read(res.data(), static_cast<std::streamsize>(size)))
     throw std::runtime_error{"Can't read string from istream"};

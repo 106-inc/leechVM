@@ -450,7 +450,7 @@ void execute_RAISE_VARARGS([[maybe_unused]] const Instruction &inst,
 void execute_CALL_FUNCTION(const Instruction &inst, State &state) {
   auto &curFrame = state.getCurFrame();
   auto idx = inst.getArg();
-  auto fName = std::string(curFrame.getName(idx));
+  auto fName = LeechString(curFrame.getName(idx));
 
   auto *fMeta = &state.pFile->meta.funcs.at(fName);
   state.nextPC = fMeta->addr;

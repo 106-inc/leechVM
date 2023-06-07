@@ -27,7 +27,7 @@ namespace yy
   { parser::token_type yylex(parser::semantic_type* yylval, parser::location_type* yylloc, Driver* driver); }
 }
 
-%token <std::string> IDENTIFIER
+%token <leech::LeechString> IDENTIFIER
 %token <int> INTEGER
 %token FUNC_DECL              ".func"
        CPOLL_DECL             ".cpool"
@@ -43,7 +43,7 @@ namespace yy
 %nterm<leech::pLeechObj>        leechObj
 %nterm<leech::pLeechObj>        primitiveTy
 %nterm<leech::pLeechObj>        tupple
-%nterm<std::string>             nameEntry
+%nterm<leech::LeechString>      nameEntry
 
 %%
 

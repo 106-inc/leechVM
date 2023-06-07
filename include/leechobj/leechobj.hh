@@ -230,12 +230,12 @@ public:
                              "the leather club's two blocks down. ");
   }
 
-  pLeechObj clone() const override { return std::make_shared<ClassObj>(*this); }
+  pLeechObj clone() const override { return buildInstance<ClassObj>(*this); }
 
   // TODO :  deserialize
 };
 
-using Tuple = std::vector<pLeechObj>;
+using Tuple = LeechVector<pLeechObj>;
 
 class TupleObj final : public LeechObj {
   Tuple tuple_;

@@ -1,3 +1,4 @@
+#include <gc/gc.hh>
 #include <sstream>
 #include <string_view>
 
@@ -52,12 +53,13 @@ TEST(Serialize, String) {
 
 TEST(Serialize, Tuple) {
   // Assign
+  gc::MemoryManager memes;
   Tuple tup;
   Tuple tup2;
   std::string_view str("HELLO!");
-  tup2.emplace_back(new NumberObj<Integer>(-1));
-  tup.emplace_back(new TupleObj(std::move(tup2)));
-  tup.emplace_back(new StringObj(str));
+  tup2.push_back(buildInstance<NumberObj<Integer>>(-1));
+  tup.push_back(buildInstance<TupleObj>(std::move(tup2)));
+  tup.push_back(buildInstance<StringObj>(str));
   TupleObj tuple(std::move(tup));
 
   std::ostringstream ss;

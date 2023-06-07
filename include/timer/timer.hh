@@ -38,4 +38,7 @@ public:
 
 } // namespace timer
 
+#undef LEECH_EXIT_SUCCUESS
+#define LEECH_EXIT_SUCCUESS 0, std::exit(0), 0
+
 #endif /* __OMP_MATMUL_TIMER_HH__ */
