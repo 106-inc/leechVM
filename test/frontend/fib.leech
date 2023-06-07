@@ -1,4 +1,4 @@
-.func fib
+.func fib 1
     .cpool
         0: 0
         1: 1

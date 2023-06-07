@@ -55,9 +55,10 @@ funcList:           funcList func                             {};
 func:               funcHeader
                         cpollBlock namesBlock codeBlock       {};
 
-funcHeader:         FUNC_DECL IDENTIFIER                      {
+funcHeader:         FUNC_DECL IDENTIFIER INTEGER              {
                                                                 driver->currentFunc_ = $2;
                                                                 driver->leechFile_->meta.funcs[$2].addr = driver->globalInstrCount_;
+                                                                driver->leechFile_->meta.funcs[$2].argNum = $3;
                                                                 driver->instrCount_ = 0;
                                                                 driver->labels_.clear();
                                                                 driver->forwardBranches_.clear();
