@@ -16,6 +16,7 @@ namespace leech {
 
 struct FuncMeta final : public ISerializable {
   FuncAddr addr{};
+  uint64_t argNum{};
   std::vector<std::shared_ptr<LeechObj>> cstPool{};
   std::vector<std::string> names{};
 
