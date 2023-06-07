@@ -571,6 +571,7 @@ void execute_PRINT([[maybe_unused]] const Instruction &inst, State &state) {
 }
 
 //CLASS OPERATION FUNCTIONS
+#pragma GCC diagnostic ignored "-Wundef"
 void printDebugInfo(
   [[maybe_unused]] std::string_view op,
   [[maybe_unused]] std::string_view name,
@@ -583,6 +584,7 @@ void printDebugInfo(
   std::cout << std::endl;
   #endif
 }
+#pragma GCC diagnostic ignored "-Wundef"
 void printDebugInfo(
   [[maybe_unused]] std::string_view op,
   [[maybe_unused]] std::string_view name,
@@ -601,8 +603,7 @@ void printDebugInfo(
 
 std::shared_ptr<ClassObj> safeConvertToClass(std::shared_ptr<LeechObj> pLeech,
   std::string_view funcName) {
-  auto tmp& = *pLeech; //To disable fucking warning
-  if (typeid(*tmp) != typeid(ClassObj)) {
+  if (pLeech->getType() != ValueType::Class) {
     auto msg = std::string(funcName) += std::string(" Trying to convert class from invalid leechObj");
     throw std::runtime_error(msg.c_str());
   }
