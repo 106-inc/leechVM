@@ -26,7 +26,7 @@ template <std::uintptr_t StartAddr, std::size_t Size> class Region final {
                     [[maybe_unused]] std::size_t size) noexcept {}
   };
 
-  static inline auto curOffset = 0;
+  static inline decltype(StartAddr) curOffset = 0;
 
   [[nodiscard]] static auto getStartPtr() {
     return reinterpret_cast<void *>(StartAddr);
