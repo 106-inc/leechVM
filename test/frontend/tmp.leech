@@ -1,0 +1,15 @@
+.func main
+    .cpool
+        0: 0
+        1: 1
+        2: 5
+    .names
+        1: foo
+        2: a
+        3: b
+        4: bar
+        5: x
+    .code
+        LOAD_BUILD_CLASS
+        LOAD_CONST 0
+        RETURN_VALUE

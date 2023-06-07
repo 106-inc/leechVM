@@ -17,6 +17,7 @@ enum class ValueType : std::uint8_t {
   Float,
   String,
   Tuple,
+  Class,
   None
 };
 

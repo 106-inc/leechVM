@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <istream>
+#include <map>
 #include <memory>
 #include <ostream>
 #include <sstream>
@@ -175,6 +176,27 @@ private:
     for (auto sym : string_)
       serializeNum(ost, sym);
   }
+};
+
+class ClassObj final : public LeechObj {
+
+  std::map<std::string, pLeechObj> fields{};
+  std::map<std::string, FuncAddr> members{};
+  std::size_t numFields{};
+  std::size_t numMembers{};
+
+public:
+  explicit ClassObj() : LeechObj(sizeof(ClassObj), ValueType::Class) {}
+
+  void print() const override {
+    std::cout << "Class dump:" << std::endl;
+    for (auto &&[key, value] : fields) {
+      std::cout << "key:" << key;
+      value->print();
+      std::cout << std::endl;
+    }
+  }
+  // TODO : clone, deserialize
 };
 
 using Tuple = std::vector<pLeechObj>;
