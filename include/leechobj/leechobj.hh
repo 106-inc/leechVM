@@ -21,17 +21,7 @@ namespace leech {
 class LeechObj;
 using pLeechObj = LeechObj *;
 
-template <typename T>
-[[nodiscard(
-    "Leech object is allocated, but not used. It's really a pitty. Please, "
-    "consider assigning the result of this really important memory allocating "
-    "function which uses mmap() Unix function inside, to some variable in "
-    "order to not forget using this pointer in near future. Thank you for "
-    "understanding from leechVM developers: Andrey Derzhavin, Kirill Ivakin, "
-    "Farid Khaidari, Vasilii Zaitsev - young and ambitious MIPT students & "
-    "Base Chair for encouraging us to "
-    "implement this wonderful study project!")]] auto
-allocateLeechObj() {
+template <typename T>[[nodiscard]] auto allocateLeechObj() {
   return static_cast<pLeechObj>(
       gc::MemoryManager::StackRegion::allocatePrimitive<T>());
 }
