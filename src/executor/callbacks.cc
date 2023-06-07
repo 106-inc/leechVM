@@ -544,10 +544,7 @@ void execute_LOAD_METHOD([[maybe_unused]] const Instruction &inst,
                          [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
 }
-void execute_CALL_METHOD([[maybe_unused]] const Instruction &inst,
-                         [[maybe_unused]] State &state) {
-  throw std::logic_error{"Function is not implemented yet"};
-}
+
 void execute_LIST_EXTEND([[maybe_unused]] const Instruction &inst,
                          [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
@@ -570,7 +567,6 @@ void execute_PRINT([[maybe_unused]] const Instruction &inst, State &state) {
 }
 
 //CLASS OPERATION FUNCTIONS
-#pragma GCC diagnostic ignored "-Wundef"
 void printDebugInfo(
   [[maybe_unused]] std::string_view op,
   [[maybe_unused]] std::string_view name,
@@ -578,7 +574,7 @@ void printDebugInfo(
   [[maybe_unused]] std::shared_ptr<ClassObj> pClassObj) {
   #ifdef DEBUG_PRINT
   std::cout << std::endl;
-  std::cout << "PC = " <<  state.pc << std::endl << op << " " << name << " = ";
+  std::cout << "PC = " <<  state.pc << std::endl << op << " " << name << std::endl;
   pClassObj ->print();
   std::cout << std::endl;
   #endif
@@ -655,6 +651,36 @@ void execute_INSTANCE_CLASS([[maybe_unused]] const Instruction &inst,
   auto pClassObj = safeConvertToClass(leechObj, "StoreBuildClass");
   curFrame.push(pClassObj->clone());
   printDebugInfo("InstanceClass", name, state, pClassObj);
+}
+void execute_REGISTER_METHOD([[maybe_unused]] const Instruction &inst,
+                             [[maybe_unused]] State &state) {
+  auto &curFrame = state.getCurFrame();
+  auto idx = inst.getArg();
+  auto fName = std::string(curFrame.getName(idx));
+
+  auto leechObj = curFrame.top();
+  auto pClassObj = safeConvertToClass(leechObj, "REGISTER_METHOD");
+  pClassObj->registerMethod(fName);
+  printDebugInfo("Method registered", fName, state, pClassObj);
+}
+void execute_CALL_METHOD([[maybe_unused]] const Instruction &inst,
+                         [[maybe_unused]] State &state) {
+  auto &curFrame = state.getCurFrame();
+  auto idx = inst.getArg();
+  auto fName = std::string(curFrame.getName(idx));
+
+  auto *fMeta = &state.pFile->meta.funcs.at(fName);
+  state.nextPC = fMeta->addr;
+
+  /* Get args from data stack */
+  std::vector<pLeechObj> args(curFrame.stackSize());
+  std::generate(args.begin(), args.end(),
+                [&curFrame] { return curFrame.popGetTos(); });
+
+  curFrame.setRet(state.pc + 1);
+  state.funcStack.emplace(fMeta);
+
+  state.getCurFrame().fillArgs(args.begin(), args.end());
 }
 
 } // namespace

@@ -6,6 +6,7 @@
 #include <map>
 #include <memory>
 #include <ostream>
+#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -181,7 +182,7 @@ private:
 class ClassObj final : public LeechObj {
 
   std::map<std::string, pLeechObj> fields{};
-  std::map<std::string, FuncAddr> members{};
+  std::set<std::string> methods{};
 
 public:
   explicit ClassObj() : LeechObj(sizeof(ClassObj), ValueType::Class) {}
@@ -194,17 +195,28 @@ public:
 
   void print() const override {
     std::cout << "~~~Class dump:~~~" << std::endl;
+    std::cout << "~~~Fields~~~" << std::endl;
     for (auto &&[key, value] : fields) {
       std::cout << "key: " << key << " = ";
       value->print();
       std::cout << std::endl;
     }
+    std::cout << "~~~Methods~~~" << std::endl;
+    for (auto &&met : methods) {
+      std::cout << met << std::endl;
+    }
+    std::cout << "~~~~~~~~~~~~~" << std::endl;
   }
 
   void updateField(std::string_view name, pLeechObj obj) {
     fields.insert_or_assign(std::string(name), obj);
   }
 
+  void registerMethod(std::string_view name) {
+    auto res = methods.insert(std::string(name));
+    if (!res.second) // name already exist
+      throw std::logic_error("Trying to register method 2nd time");
+  }
 
   pLeechObj getField(std::string_view name) const {
     auto It = fields.find(std::string(name));
