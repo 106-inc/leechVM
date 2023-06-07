@@ -572,8 +572,10 @@ void execute_PRINT([[maybe_unused]] const Instruction &inst, State &state) {
 
 //CLASS OPERATION FUNCTIONS
 void printDebugInfo(
-  std::string_view op, std::string_view name, const State & state,
-    std::shared_ptr<ClassObj> pClassObj) {
+  [[maybe_unused]] std::string_view op,
+  [[maybe_unused]] std::string_view name,
+  [[maybe_unused]] const State & state,
+  [[maybe_unused]] std::shared_ptr<ClassObj> pClassObj) {
   #if DEBUG_PRINT
   std::cout << std::endl;
   std::cout << "PC = " <<  state.pc << std::endl << op << " " << name << " = ";
@@ -582,8 +584,11 @@ void printDebugInfo(
   #endif
 }
 void printDebugInfo(
-  std::string_view op, std::string_view name, const State & state,
-    std::shared_ptr<ClassObj> pClassObj, std::shared_ptr<LeechObj> attr) {
+  [[maybe_unused]] std::string_view op,
+  [[maybe_unused]] std::string_view name,
+  [[maybe_unused]] const State & state,
+  [[maybe_unused]] std::shared_ptr<ClassObj> pClassObj,
+  [[maybe_unused]] std::shared_ptr<LeechObj> attr) {
   #if DEBUG_PRINT
   std::cout << std::endl;
   std::cout << "PC = " <<  state.pc << std::endl << op << " " << name << " = ";
@@ -596,7 +601,8 @@ void printDebugInfo(
 
 std::shared_ptr<ClassObj> safeConvertToClass(std::shared_ptr<LeechObj> pLeech,
   std::string_view funcName) {
-  if (typeid(*pLeech) != typeid(ClassObj)) {
+  auto tmp& = *pLeech; //To disable fucking warning
+  if (typeid(*tmp) != typeid(ClassObj)) {
     auto msg = std::string(funcName) += std::string(" Trying to convert class from invalid leechObj");
     throw std::runtime_error(msg.c_str());
   }

@@ -182,7 +182,6 @@ class ClassObj final : public LeechObj {
 
   std::map<std::string, pLeechObj> fields{};
   std::map<std::string, FuncAddr> members{};
-  std::size_t numMembers{};
 
 public:
   explicit ClassObj() : LeechObj(sizeof(ClassObj), ValueType::Class) {}
