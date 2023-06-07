@@ -3,6 +3,7 @@
 
 #include "common/common.hh"
 #include "executor/executor.hh"
+#include "leechobj/leechobj.hh"
 
 namespace {
 using namespace leech;
@@ -570,54 +571,52 @@ void execute_PRINT([[maybe_unused]] const Instruction &inst, State &state) {
   std::cout << std::endl;
 }
 
-//CLASS OPERATION FUNCTIONS
+// CLASS OPERATION FUNCTIONS
 #pragma GCC diagnostic ignored "-Wundef"
-void printDebugInfo(
-  [[maybe_unused]] std::string_view op,
-  [[maybe_unused]] std::string_view name,
-  [[maybe_unused]] const State & state,
-  [[maybe_unused]] std::shared_ptr<ClassObj> pClassObj) {
-  #ifdef DEBUG_PRINT
+void printDebugInfo([[maybe_unused]] std::string_view op,
+                    [[maybe_unused]] std::string_view name,
+                    [[maybe_unused]] const State &state,
+                    [[maybe_unused]] ClassObj *pClassObj) {
+#ifdef DEBUG_PRINT
   std::cout << std::endl;
-  std::cout << "PC = " <<  state.pc << std::endl << op << " " << name << " = ";
-  pClassObj ->print();
+  std::cout << "PC = " << state.pc << std::endl << op << " " << name << " = ";
+  pClassObj->print();
   std::cout << std::endl;
-  #endif
+#endif
 }
 
-void printDebugInfo(
-  [[maybe_unused]] std::string_view op,
-  [[maybe_unused]] std::string_view name,
-  [[maybe_unused]] const State & state,
-  [[maybe_unused]] std::shared_ptr<ClassObj> pClassObj,
-  [[maybe_unused]] std::shared_ptr<LeechObj> attr) {
-  #ifdef DEBUG_PRINT
+void printDebugInfo([[maybe_unused]] std::string_view op,
+                    [[maybe_unused]] std::string_view name,
+                    [[maybe_unused]] const State &state,
+                    [[maybe_unused]] ClassObj *pClassObj,
+                    [[maybe_unused]] LeechObj *attr) {
+#ifdef DEBUG_PRINT
   std::cout << std::endl;
-  std::cout << "PC = " <<  state.pc << std::endl << op << " " << name << " = ";
+  std::cout << "PC = " << state.pc << std::endl << op << " " << name << " = ";
   attr->print();
   std::cout << std::endl;
-  pClassObj ->print();
+  pClassObj->print();
   std::cout << std::endl;
-  #endif
+#endif
 }
 
-std::shared_ptr<ClassObj> safeConvertToClass(std::shared_ptr<LeechObj> pLeech,
-  std::string_view funcName) {
+auto safeConvertToClass(pLeechObj pLeech, std::string_view funcName) {
   if (pLeech->getType() != ValueType::Class) {
-    auto msg = std::string(funcName) += std::string(" Trying to convert class from invalid leechObj");
+    auto msg = std::string(funcName) +=
+        std::string(" Trying to convert class from invalid leechObj");
     throw std::runtime_error(msg.c_str());
   }
-  return std::static_pointer_cast<ClassObj>(pLeech);
+  return static_cast<ClassObj *>(pLeech);
 }
 
 void execute_LOAD_BUILD_CLASS([[maybe_unused]] const Instruction &inst,
                               [[maybe_unused]] State &state) {
   auto &curFrame = state.getCurFrame();
-  curFrame.push(std::make_shared<ClassObj>());
+  curFrame.push(buildInstance<ClassObj>());
 }
 
 void execute_STORE_BUILD_CLASS([[maybe_unused]] const Instruction &inst,
-                       [[maybe_unused]] State &state) {
+                               [[maybe_unused]] State &state) {
   auto &curFrame = state.getCurFrame();
   auto name = curFrame.getName(inst.getArg());
   auto leechObj = curFrame.popGetTos();
@@ -625,7 +624,6 @@ void execute_STORE_BUILD_CLASS([[maybe_unused]] const Instruction &inst,
   curFrame.setVar(name, pClassObj);
   printDebugInfo("StoreBuildClass", name, state, pClassObj);
 }
-
 
 void execute_STORE_ATTR([[maybe_unused]] const Instruction &inst,
                         [[maybe_unused]] State &state) {
@@ -650,7 +648,7 @@ void execute_LOAD_ATTR([[maybe_unused]] const Instruction &inst,
 }
 
 void execute_INSTANCE_CLASS([[maybe_unused]] const Instruction &inst,
-                              [[maybe_unused]] State &state) {
+                            [[maybe_unused]] State &state) {
   auto &curFrame = state.getCurFrame();
   auto name = curFrame.getName(inst.getArg());
   auto leechObj = curFrame.getVar(name);
