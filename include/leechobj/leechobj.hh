@@ -182,7 +182,6 @@ class ClassObj final : public LeechObj {
 
   std::map<std::string, pLeechObj> fields{};
   std::map<std::string, FuncAddr> members{};
-  std::size_t numFields{};
   std::size_t numMembers{};
 
 public:
@@ -195,7 +194,7 @@ public:
   ~ClassObj() = default;
 
   void print() const override {
-    std::cout << "Class dump:" << std::endl;
+    std::cout << "~~~Class dump:~~~" << std::endl;
     for (auto &&[key, value] : fields) {
       std::cout << "key: " << key << " = ";
       value->print();
@@ -216,7 +215,12 @@ public:
       return It->second;
   }
 
-  void serializeVal([[maybe_unused]] std::ostream &ost) const override {}
+  std::size_t getNumFields() { return fields.size(); }
+
+  void serializeVal([[maybe_unused]] std::ostream &ost) const override {
+    throw std::runtime_error("Hey buddy, I think you've got the wrong door, "
+                             "the leather club's two blocks down. ");
+  }
 
   pLeechObj clone() const override { return std::make_shared<ClassObj>(*this); }
 

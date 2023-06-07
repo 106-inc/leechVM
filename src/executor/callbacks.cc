@@ -214,18 +214,6 @@ void execute_PRINT_EXPR([[maybe_unused]] const Instruction &inst,
                         [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
 }
-void execute_LOAD_BUILD_CLASS([[maybe_unused]] const Instruction &inst,
-                              [[maybe_unused]] State &state) {
-  auto &curFrame = state.getCurFrame();
-  curFrame.push(std::make_shared<ClassObj>());
-  #if DEBUG_PRINT
-  std::cout << std::endl;
-  std::cout << "Class Builder" << std::endl;
-  std::cout << "Stack Size: " << curFrame.stackSize() << std::endl;
-  std::cout << std::endl;
-  #endif
-}
-
 void execute_YIELD_FROM([[maybe_unused]] const Instruction &inst,
                         [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
@@ -318,25 +306,7 @@ void execute_UNPACK_EX([[maybe_unused]] const Instruction &inst,
                        [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
 }
-void execute_STORE_ATTR([[maybe_unused]] const Instruction &inst,
-                        [[maybe_unused]] State &state) {
-  auto &curFrame = state.getCurFrame();
-  auto name = curFrame.getName(inst.getArg());
-  auto attr = curFrame.popGetTos();
-  auto classObj = curFrame.top();
-  if (typeid(*classObj) != typeid(ClassObj))
-    throw std::runtime_error("Store attr: trying to call from invalid leechObj");
-  auto pClassObj = std::static_pointer_cast<ClassObj>(classObj);
-  pClassObj->updateField(name, attr);
-  #if DEBUG_PRINT
-  std::cout << std::endl;
-  std::cout << "PC = " << state.pc << " Stored attr: " << name << " = ";
-  attr->print();
-  std::cout << std::endl;
-  pClassObj ->print();
-  std::cout << std::endl;
-  #endif
-}
+
 void execute_DELETE_ATTR([[maybe_unused]] const Instruction &inst,
                          [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
@@ -377,59 +347,6 @@ void execute_BUILD_MAP([[maybe_unused]] const Instruction &inst,
                        [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
 }
-void execute_LOAD_ATTR([[maybe_unused]] const Instruction &inst,
-                       [[maybe_unused]] State &state) {
-  auto &curFrame = state.getCurFrame();
-  auto name = curFrame.getName(inst.getArg());
-  auto classObj = curFrame.top();
-  if (typeid(*classObj) != typeid(ClassObj))
-    throw std::runtime_error("Load attr: trying to call from invalid leechObj");
-  auto pClassObj = std::static_pointer_cast<ClassObj>(classObj);
-  auto attr = pClassObj->getField(name);
-  curFrame.push(attr);
-  #if DEBUG_PRINT
-  std::cout << std::endl;
-  std::cout << "PC = " << state.pc << " Loaded attr: " << name << " = ";
-  attr->print();
-  std::cout << std::endl;
-  pClassObj ->print();
-  std::cout << std::endl;
-  #endif
-}
-
-void execute_STORE_BUILD_CLASS([[maybe_unused]] const Instruction &inst,
-                       [[maybe_unused]] State &state) {
-  auto &curFrame = state.getCurFrame();
-  auto name = curFrame.getName(inst.getArg());
-  auto classObj = curFrame.popGetTos();
-  if (typeid(*classObj) != typeid(ClassObj))
-    throw std::runtime_error("Store Build Class: trying to call from invalid leechObj");
-  auto pClassObj = std::static_pointer_cast<ClassObj>(classObj);
-  curFrame.setVar(name, pClassObj);
-  #if DEBUG_PRINT
-  std::cout << std::endl;
-  std::cout << "PC = " << state.pc << " StoreBuildClass: " << name << " = ";
-  pClassObj ->print();
-  std::cout << std::endl;
-  #endif
-}
-
-void execute_INSTANCE_CLASS([[maybe_unused]] const Instruction &inst,
-                              [[maybe_unused]] State &state) {
-  auto &curFrame = state.getCurFrame();
-  auto name = curFrame.getName(inst.getArg());
-  auto templateClass = curFrame.getVar(name);
-  if (typeid(*templateClass) != typeid(ClassObj))
-    throw std::runtime_error("Instance Class: trying to call from invalid leechObj");
-  auto pClassObj = std::static_pointer_cast<ClassObj>(templateClass);
-  curFrame.push(pClassObj->clone());
-  #if DEBUG_PRINT
-  std::cout << std::endl;
-  std::cout << "PC = " << state.pc << " InstanceClass: " << name;
-  std::cout << std::endl;
-  #endif
-}
-
 void execute_COMPARE_OP(const Instruction &inst, State &state) {
   auto &curFrame = state.getCurFrame();
   auto op = static_cast<CmpOp>(inst.getArg());
@@ -652,6 +569,89 @@ void execute_PRINT([[maybe_unused]] const Instruction &inst, State &state) {
   state.getCurFrame().popGetTos()->print();
   std::cout << std::endl;
 }
+
+//CLASS OPERATION FUNCTIONS
+void printDebugInfo(
+  std::string_view op, std::string_view name, const State & state,
+    std::shared_ptr<ClassObj> pClassObj) {
+  #if DEBUG_PRINT
+  std::cout << std::endl;
+  std::cout << "PC = " <<  state.pc << std::endl << op << " " << name << " = ";
+  pClassObj ->print();
+  std::cout << std::endl;
+  #endif
+}
+void printDebugInfo(
+  std::string_view op, std::string_view name, const State & state,
+    std::shared_ptr<ClassObj> pClassObj, std::shared_ptr<LeechObj> attr) {
+  #if DEBUG_PRINT
+  std::cout << std::endl;
+  std::cout << "PC = " <<  state.pc << std::endl << op << " " << name << " = ";
+  attr->print();
+  std::cout << std::endl;
+  pClassObj ->print();
+  std::cout << std::endl;
+  #endif
+}
+
+std::shared_ptr<ClassObj> safeConvertToClass(std::shared_ptr<LeechObj> pLeech,
+  std::string_view funcName) {
+  if (typeid(*pLeech) != typeid(ClassObj)) {
+    auto msg = std::string(funcName) += std::string(" Trying to convert class from invalid leechObj");
+    throw std::runtime_error(msg.c_str());
+  }
+  return std::static_pointer_cast<ClassObj>(pLeech);
+}
+
+void execute_LOAD_BUILD_CLASS([[maybe_unused]] const Instruction &inst,
+                              [[maybe_unused]] State &state) {
+  auto &curFrame = state.getCurFrame();
+  curFrame.push(std::make_shared<ClassObj>());
+}
+
+void execute_STORE_BUILD_CLASS([[maybe_unused]] const Instruction &inst,
+                       [[maybe_unused]] State &state) {
+  auto &curFrame = state.getCurFrame();
+  auto name = curFrame.getName(inst.getArg());
+  auto leechObj = curFrame.popGetTos();
+  auto pClassObj = safeConvertToClass(leechObj, "StoreBuildClass");
+  curFrame.setVar(name, pClassObj);
+  printDebugInfo("StoreBuildClass", name, state, pClassObj);
+}
+
+
+void execute_STORE_ATTR([[maybe_unused]] const Instruction &inst,
+                        [[maybe_unused]] State &state) {
+  auto &curFrame = state.getCurFrame();
+  auto name = curFrame.getName(inst.getArg());
+  auto attr = curFrame.popGetTos();
+  auto leechObj = curFrame.top();
+  auto pClassObj = safeConvertToClass(leechObj, "StoreAttr");
+  pClassObj->updateField(name, attr);
+  printDebugInfo("StoreAttr", name, state, pClassObj, attr);
+}
+
+void execute_LOAD_ATTR([[maybe_unused]] const Instruction &inst,
+                       [[maybe_unused]] State &state) {
+  auto &curFrame = state.getCurFrame();
+  auto name = curFrame.getName(inst.getArg());
+  auto leechObj = curFrame.top();
+  auto pClassObj = safeConvertToClass(leechObj, "StoreBuildClass");
+  auto attr = pClassObj->getField(name);
+  curFrame.push(attr);
+  printDebugInfo("LoadAttr", name, state, pClassObj, attr);
+}
+
+void execute_INSTANCE_CLASS([[maybe_unused]] const Instruction &inst,
+                              [[maybe_unused]] State &state) {
+  auto &curFrame = state.getCurFrame();
+  auto name = curFrame.getName(inst.getArg());
+  auto leechObj = curFrame.getVar(name);
+  auto pClassObj = safeConvertToClass(leechObj, "StoreBuildClass");
+  curFrame.push(pClassObj->clone());
+  printDebugInfo("InstanceClass", name, state, pClassObj);
+}
+
 } // namespace
 
 const std::unordered_map<leech::Opcodes, leech::Instruction::Callback>
