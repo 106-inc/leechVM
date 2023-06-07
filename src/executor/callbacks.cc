@@ -583,7 +583,6 @@ void printDebugInfo(
   std::cout << std::endl;
   #endif
 }
-
 void printDebugInfo(
   [[maybe_unused]] std::string_view op,
   [[maybe_unused]] std::string_view name,
