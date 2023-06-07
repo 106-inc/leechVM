@@ -205,6 +205,7 @@ public:
     fields.insert_or_assign(std::string(name), obj);
   }
 
+<<<<<<< HEAD
   pLeechObj getField(std::string_view name) const {
     auto It = fields.find(std::string(name));
     if (It == fields.end()) {
@@ -224,6 +225,13 @@ public:
   pLeechObj clone() const override { return std::make_shared<ClassObj>(*this); }
 
   // TODO :  deserialize
+=======
+  void serializeVal([[maybe_unused]] std::ostream &ost) const override {}
+
+  pLeechObj clone() const override { return std::make_unique<ClassObj>(); }
+
+  // TODO : clone, deserialize
+>>>>>>> 2203d98 (Add storeAttr to classObj)
 };
 
 using Tuple = std::vector<pLeechObj>;

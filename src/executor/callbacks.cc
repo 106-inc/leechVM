@@ -214,16 +214,15 @@ void execute_PRINT_EXPR([[maybe_unused]] const Instruction &inst,
                         [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
 }
-<<<<<<< HEAD
-=======
 void execute_LOAD_BUILD_CLASS([[maybe_unused]] const Instruction &inst,
                               [[maybe_unused]] State &state) {
-  std::cout << "Class Builder" << std::endl;
   auto &curFrame = state.getCurFrame();
-  curFrame.push(curFrame.getConst(0));
-  //throw std::logic_error{"Function is not implemented yet"};
+  curFrame.push(std::make_shared<ClassObj>());
+  //DEBUG
+  std::cout << "Class Builder" << std::endl;
+  std::cout << "Stack Size: " << curFrame.stackSize() << std::endl;
 }
->>>>>>> a84c111 (Add class leechObj)
+
 void execute_YIELD_FROM([[maybe_unused]] const Instruction &inst,
                         [[maybe_unused]] State &state) {
   throw std::logic_error{"Function is not implemented yet"};
