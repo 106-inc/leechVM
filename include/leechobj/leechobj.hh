@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <istream>
+#include <map>
 #include <memory>
 #include <ostream>
 #include <sstream>
@@ -175,6 +176,54 @@ private:
     for (auto sym : string_)
       serializeNum(ost, sym);
   }
+};
+
+class ClassObj final : public LeechObj {
+
+  std::map<std::string, pLeechObj> fields{};
+  std::map<std::string, FuncAddr> members{};
+
+public:
+  explicit ClassObj() : LeechObj(sizeof(ClassObj), ValueType::Class) {}
+
+  ClassObj(ClassObj &&) = default;
+  ClassObj(const ClassObj &) = default;
+  ClassObj &operator=(ClassObj &) = default;
+  ClassObj &operator=(ClassObj &&) = default;
+  ~ClassObj() = default;
+
+  void print() const override {
+    std::cout << "~~~Class dump:~~~" << std::endl;
+    for (auto &&[key, value] : fields) {
+      std::cout << "key: " << key << " = ";
+      value->print();
+      std::cout << std::endl;
+    }
+  }
+
+  void updateField(std::string_view name, pLeechObj obj) {
+    fields.insert_or_assign(std::string(name), obj);
+  }
+
+  pLeechObj getField(std::string_view name) const {
+    auto It = fields.find(std::string(name));
+    if (It == fields.end()) {
+      auto msg = std::string("Invalid field name: ") += std::string(name);
+      throw std::runtime_error(msg);
+    } else
+      return It->second;
+  }
+
+  std::size_t getNumFields() { return fields.size(); }
+
+  void serializeVal([[maybe_unused]] std::ostream &ost) const override {
+    throw std::runtime_error("Hey buddy, I think you've got the wrong door, "
+                             "the leather club's two blocks down. ");
+  }
+
+  pLeechObj clone() const override { return std::make_shared<ClassObj>(*this); }
+
+  // TODO :  deserialize
 };
 
 using Tuple = std::vector<pLeechObj>;

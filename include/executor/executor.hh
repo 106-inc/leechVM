@@ -68,7 +68,11 @@ public:
     return pmeta_->names.at(idx);
   }
 
-  [[nodiscard]] auto top() const { return dataStack_.top(); }
+  [[nodiscard]] auto top() const {
+    if (!dataStack_.size())
+      throw std::runtime_error("Trying to top from empty stack!");
+    return dataStack_.top();
+  }
 
   [[nodiscard]] auto popGetTos() {
     auto tos = top()->clone();
@@ -76,7 +80,11 @@ public:
     return tos;
   }
 
-  void pop() { dataStack_.pop(); }
+  void pop() {
+    if (!dataStack_.size())
+      throw std::runtime_error("Trying to pop from empty stack!");
+    dataStack_.pop();
+  }
 };
 
 using FuncStack = std::stack<StackFrame>;
