@@ -21,12 +21,12 @@ namespace leech {
 class LeechObj;
 using pLeechObj = LeechObj *;
 
-template <typename T>[[nodiscard]] auto allocateLeechObj() {
+template <typename T> [[nodiscard]] auto allocateLeechObj() {
   return static_cast<pLeechObj>(
       gc::MemoryManager::StackRegion::allocatePrimitive<T>());
 }
 
-template <typename T, typename... Args> auto buildInstance(Args &&... args) {
+template <typename T, typename... Args> auto buildInstance(Args &&...args) {
   auto *obj = allocateLeechObj<T>();
   return new (obj) T(std::forward<Args>(args)...);
 }

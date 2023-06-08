@@ -28,7 +28,7 @@ public:
   StackFrame(StackFrame &&) = default;
   StackFrame &operator=(StackFrame &&) = default;
 
-  template <class T, typename... Args> void emplace(Args &&... args) {
+  template <class T, typename... Args> void emplace(Args &&...args) {
     dataStack_.emplace(buildInstance<T>(args...));
   }
 
