@@ -1,4 +1,4 @@
-.func main
+.func main 0
     .cpool
         0: 0
         1: 1
@@ -12,6 +12,7 @@
         3: bar
         4: x
         5: y
+        6: baz
     .code
         LOAD_BUILD_CLASS
         LOAD_CONST 0
@@ -25,11 +26,27 @@
         POP_TOP
         STORE_BUILD_CLASS 0
 
-.func bar
+        INSTANCE_CLASS 0
+        STORE_FAST 4
+        LOAD_CONST 1
+        CALL_METHOD 3
+        LOAD_FAST 4
+        LOAD_CONST 3
+        STORE_ATTR 4
+        PRINT
+
+        LOAD_CONST 0
+        RETURN_VALUE
+
+
+.func bar 1
   .cpool
       0: 0
   .names
-      0: a
+      0: a_arg
+      1: a
   .code
+  LOAD_FAST 0
+  STORE_ATTR 1
   LOAD_CONST 0
   RETURN_VALUE
